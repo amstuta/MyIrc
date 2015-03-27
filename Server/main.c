@@ -5,17 +5,19 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Fri Mar 27 16:01:40 2015 arthur
+** Last update Fri Mar 27 16:34:37 2015 arthur
 */
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include "server.h"
 
 void			accept_clients(int fd, int cs, int port)
 {

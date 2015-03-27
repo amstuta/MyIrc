@@ -5,7 +5,7 @@
 ## Login   <amstuta@epitech.net>
 ##
 ## Started on  Fri Mar 27 12:59:11 2015 arthur
-## Last update Fri Mar 27 15:57:26 2015 arthur
+## Last update Fri Mar 27 16:29:15 2015 arthur
 ##
 
 RM	= rm -f
@@ -17,7 +17,9 @@ CFLAGS	= -Wall -Wextra -Werror
 NAME1	= client
 NAME2	= server
 
-SRCS_C	= Client/main.c
+SRCS_C	= Client/main.c \
+	  Client/read.c \
+	  Client/socket.c
 SRCS_S	= Server/main.c \
 	  Server/client.c
 

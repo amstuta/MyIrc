@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:32:10 2015 arthur
-** Last update Fri Mar 27 16:01:58 2015 arthur
+** Last update Fri Mar 27 16:43:15 2015 arthur
 */
 
 #include <string.h>
@@ -21,6 +21,7 @@ void		add_client(t_client **clients, int fd, char *login)
     return ;
   new->fd = fd;
   new->login = strdup(login);
+  new->channel = NULL;
   new->next = NULL;
   if (*clients == NULL)
     *clients = new;
@@ -52,5 +53,6 @@ void		remove_client(t_client **clients, int fd)
   else
     save->next = tmp->next;
   free(tmp->login);
+  free(tmp->channel);
   free(tmp);
 }

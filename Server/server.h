@@ -5,16 +5,19 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:30:08 2015 arthur
-** Last update Fri Mar 27 15:57:05 2015 arthur
+** Last update Fri Mar 27 16:42:50 2015 arthur
 */
 
 #ifndef SERVER_H_
 # define SERVER_H_
 
+# define LINE_SIZE	4096
+
 typedef struct		s_client
 {
   int			fd;
   char			*login;
+  char			*channel;
   struct s_client	*next;
 }			t_client;
 
