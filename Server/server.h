@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:30:08 2015 arthur
-** Last update Fri Mar 27 16:42:50 2015 arthur
+** Last update Fri Mar 27 17:06:48 2015 arthur
 */
 
 #ifndef SERVER_H_
@@ -21,6 +21,7 @@ typedef struct		s_client
   struct s_client	*next;
 }			t_client;
 
+void	exit_signal(int);
 void	add_client(t_client**, int, char*);
 void	remove_client(t_client**, int);
 
