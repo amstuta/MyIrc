@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:17:26 2015 arthur
-** Last update Fri Mar 27 16:34:58 2015 arthur
+** Last update Fri Mar 27 16:59:32 2015 arthur
 */
 
 #include <string.h>
@@ -26,7 +26,7 @@ int			create_socket(char *ip, int port)
   if ((fd = socket(AF_INET, SOCK_STREAM, pe->p_proto)) == -1)
     {
       perror("");
-      exit(EXIT_FAILURE);
+      return (-1);
     }
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
@@ -35,12 +35,12 @@ int			create_socket(char *ip, int port)
     {
       perror("");
       close(fd);
-      exit(EXIT_FAILURE);
+      return (-1);
     }
   return (fd);
 }
 
-void			connect_to_serv(char *cmd)
+int			connect_to_serv(char *cmd)
 {
   int			fd;
   char			*ip;
@@ -52,8 +52,9 @@ void			connect_to_serv(char *cmd)
   if (!ip || !port)
     {
       write(1, "Ip or port not specified", 24);
-      return ;
+      return (-1);
     }
-  fd = create_socket(ip, port);
-  (void)fd;
+  if ((fd = create_socket(ip, port)) == -1)
+    return (-1);
+  return (fd);
 }

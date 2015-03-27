@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Fri Mar 27 16:30:07 2015 arthur
+** Last update Fri Mar 27 16:59:10 2015 arthur
 */
 
 #include <string.h>
@@ -13,10 +13,13 @@
 #include "client.h"
 
 int	check_cmd(char *cmd)
-{  
+{
+  int	fd;
+  
   if (!strncmp(cmd, SERVER, strlen(SERVER)))
     {
-      connect_to_serv(cmd);
+      if ((fd = connect_to_serv(cmd)) == -1)
+	return (-1);
       return (1);
     }
   return (0);
