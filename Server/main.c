@@ -5,28 +5,30 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Fri Mar 27 13:31:56 2015 arthur
+** Last update Fri Mar 27 16:01:40 2015 arthur
 */
 
+#include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 
-void			accept_client(int fd, int cs, int port)
+void			accept_clients(int fd, int cs, int port)
 {
   struct sockaddr_in	sin_c;
   int			c_len;
 
+  (void)port;
   c_len = sizeof(sin_c);
   while (1)
     {
       cs = accept(fd, (struct sockaddr*)&sin_c, (socklen_t*)&c_len);
       if (cs == -1)
 	return ;
-      g_fd = cs;
     }
 }
 
@@ -56,7 +58,13 @@ void			create_socket(int port)
   accept_clients(fd, cs, port);
 }
 
-int			main()
-{ 
-  return (0);
+int			main(int ac, char **av)
+{
+  if (ac != 2)
+    {
+      printf("Usage: ./server port\n");
+      return (EXIT_FAILURE);
+    }
+  create_socket(atoi(av[1]));
+  return (EXIT_SUCCESS);
 }

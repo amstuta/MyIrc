@@ -5,7 +5,7 @@
 ## Login   <amstuta@epitech.net>
 ##
 ## Started on  Fri Mar 27 12:59:11 2015 arthur
-## Last update Fri Mar 27 13:07:49 2015 arthur
+## Last update Fri Mar 27 15:57:26 2015 arthur
 ##
 
 RM	= rm -f
@@ -18,7 +18,8 @@ NAME1	= client
 NAME2	= server
 
 SRCS_C	= Client/main.c
-SRCS_S	= Server/main.c
+SRCS_S	= Server/main.c \
+	  Server/client.c
 
 OBJS_C	= $(SRCS_C:.c=.o)
 OBJS_S	= $(SRCS_S:.c=.o)
