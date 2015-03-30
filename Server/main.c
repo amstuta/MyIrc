@@ -35,6 +35,64 @@ void			accept_clients(int fd, int cs, int port)
     }
 }
 
+void			set_clients(t_client **clients, fd_set *readfds)
+{
+  t_client		*tmp;
+
+  tmp = *clients;
+  while (tmp)
+    {
+      FD_SET(tmp->fd, readfds);
+      tmp = tmp->next;
+    }
+}
+
+t_client		*init_clients(int fd)
+{
+  t_client		*res;
+
+  if (!(res = malloc(sizeof(t_client))))
+    exit(EXIT_FAILURE);
+  res->fd = fd;
+  res->login = NULL;
+  res->channel = NULL;
+  res->next = NULL;
+  return (res);
+}
+
+int			get_plus_gros_fd(t_client *clients)
+{
+  int			res;
+  t_client		*tmp;
+
+  res = 0;
+  tmp = clients;
+  while (tmp)
+    {
+      if (tmp->fd > res)
+	res = tmp->fd;
+      tmp = tmp->next;
+    }
+  return (res);
+}
+
+void			my_select(int fd)
+{
+  fd_set		readfds;
+  t_client		*clients;
+  int			plus_gros_fd;
+
+  clients = init_clients(fd);
+  while (1)
+    {
+      FD_ZERO(&readfds);
+      set_clients(&clients, &readfds);
+      plus_gros_fd = get_plus_gros_fd(clients);
+      if (select(plus_gros_fd + 1, &readfds, NULL, NULL, NULL) == -1)
+	break;
+    }
+}
+
 void			create_socket(int port)
 {
   int			cs;
@@ -58,7 +116,8 @@ void			create_socket(int port)
       close(fd);
       return ;
     }
-  accept_clients(fd, cs, port);
+  my_select(fd);
+  //accept_clients(fd,/*, cs */ port);
 }
 
 void			exit_signal(int sig)
