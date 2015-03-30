@@ -20,12 +20,12 @@
 #include <netdb.h>
 #include "server.h"
 
-void			accept_clients(int fd, int cs, int port)
+void			accept_clients(int fd)
 {
+  int			cs;
   struct sockaddr_in	sin_c;
   int			c_len;
 
-  (void)port;
   c_len = sizeof(sin_c);
   while (1)
     {
