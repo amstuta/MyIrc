@@ -23,7 +23,9 @@
 # define ACCEPT		"/accept_file"
 
 void	read_cmd();
-int	check_cmd(char*);
+void	select_entry(int);
+void	read_cmd_serv(int);
+void	read_cmd_str(int);
 int	create_socket(char*, int);
 int	connect_to_serv(char*);
 
