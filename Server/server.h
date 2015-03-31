@@ -21,8 +21,15 @@ typedef struct		s_client
   struct s_client	*next;
 }			t_client;
 
-void	exit_signal(int);
-void	add_client(t_client**, int, char*);
-void	remove_client(t_client**, int);
+void		exit_signal(int);
+void		add_client(t_client**, int, char*);
+void		remove_client(t_client**, int);
+void		accept_client(int, t_client**);
+void		set_clients(t_client**, fd_set*);
+t_client	*init_clients(int);
+void		check_clients_fd(t_client*, fd_set*);
+void		my_select(int);
+int		get_plus_gros_fd(t_client*);
+void		read_client(int, t_client*);
 
 #endif /* !SERVER_H_ */

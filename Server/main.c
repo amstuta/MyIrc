@@ -20,46 +20,6 @@
 #include <netdb.h>
 #include "server.h"
 
-void			accept_clients(int fd)
-{
-  int			cs;
-  struct sockaddr_in	sin_c;
-  int			c_len;
-
-  c_len = sizeof(sin_c);
-  while (1)
-    {
-      cs = accept(fd, (struct sockaddr*)&sin_c, (socklen_t*)&c_len);
-      if (cs == -1)
-	return ;
-    }
-}
-
-void			set_clients(t_client **clients, fd_set *readfds)
-{
-  t_client		*tmp;
-
-  tmp = *clients;
-  while (tmp)
-    {
-      FD_SET(tmp->fd, readfds);
-      tmp = tmp->next;
-    }
-}
-
-t_client		*init_clients(int fd)
-{
-  t_client		*res;
-
-  if (!(res = malloc(sizeof(t_client))))
-    exit(EXIT_FAILURE);
-  res->fd = fd;
-  res->login = NULL;
-  res->channel = NULL;
-  res->next = NULL;
-  return (res);
-}
-
 int			get_plus_gros_fd(t_client *clients)
 {
   int			res;
@@ -76,20 +36,21 @@ int			get_plus_gros_fd(t_client *clients)
   return (res);
 }
 
-void			my_select(int fd)
+void			read_client(int fd, t_client *clients)
 {
-  fd_set		readfds;
-  t_client		*clients;
-  int			plus_gros_fd;
+  int			rd;
+  char			buf[4096];
 
-  clients = init_clients(fd);
-  while (1)
+  if ((rd = read(fd, buf, 4095)) == -1)
+    return ;
+  buf[rd] = 0;
+
+  t_client *tmp = clients->next;
+  while (tmp)
     {
-      FD_ZERO(&readfds);
-      set_clients(&clients, &readfds);
-      plus_gros_fd = get_plus_gros_fd(clients);
-      if (select(plus_gros_fd + 1, &readfds, NULL, NULL, NULL) == -1)
-	break;
+      if (tmp->fd != fd)
+	write(tmp->fd, buf, strlen(buf));
+      tmp = tmp->next;
     }
 }
 
@@ -117,7 +78,6 @@ void			create_socket(int port)
       return ;
     }
   my_select(fd);
-  //accept_clients(fd,/*, cs */ port);
 }
 
 void			exit_signal(int sig)
