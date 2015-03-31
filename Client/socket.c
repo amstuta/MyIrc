@@ -44,11 +44,14 @@ int			connect_to_serv(char *cmd)
 {
   int			fd;
   char			*ip;
+  char			*tmp;
   int			port;
   
   strtok(cmd, " ");
   ip = strtok(NULL, ":");
-  port = atoi(strtok(NULL, "\n"));
+  if (!(tmp = strtok(NULL, "\n")))
+    return (-1);
+  port = atoi(tmp);
   if (!ip || !port)
     {
       write(1, "Ip or port not specified", 24);
