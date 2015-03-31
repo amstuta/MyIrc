@@ -74,15 +74,15 @@ void			my_select(int fd)
 {
   fd_set		readfds;
   t_client		*clients;
-  int			plus_gros_fd;
+  int			bigger_fd;
 
   clients = init_clients(fd);
   while (1)
     {
       FD_ZERO(&readfds);
       set_clients(&clients, &readfds);
-      plus_gros_fd = get_plus_gros_fd(clients);
-      if (select(plus_gros_fd + 1, &readfds, NULL, NULL, NULL) == -1)
+      bigger_fd = get_bigger_fd(clients);
+      if (select(bigger_fd + 1, &readfds, NULL, NULL, NULL) == -1)
 	break;
       if (FD_ISSET(fd, &readfds) != 0)
 	accept_client(fd, &clients);

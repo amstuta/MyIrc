@@ -20,7 +20,7 @@
 #include <netdb.h>
 #include "server.h"
 
-int			get_plus_gros_fd(t_client *clients)
+int			get_bigger_fd(t_client *clients)
 {
   int			res;
   t_client		*tmp;
@@ -40,12 +40,12 @@ void			read_client(int fd, t_client *clients)
 {
   int			rd;
   char			buf[4096];
+  t_client		*tmp;
 
+  tmp = clients->next;
   if ((rd = read(fd, buf, 4095)) == -1)
     return ;
   buf[rd] = 0;
-
-  t_client *tmp = clients->next;
   while (tmp)
     {
       if (tmp->fd != fd)

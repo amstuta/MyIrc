@@ -29,7 +29,7 @@ void		set_clients(t_client**, fd_set*);
 t_client	*init_clients(int);
 void		check_clients_fd(t_client*, fd_set*);
 void		my_select(int);
-int		get_plus_gros_fd(t_client*);
+int		get_bigger_fd(t_client*);
 void		read_client(int, t_client*);
 
 #endif /* !SERVER_H_ */
