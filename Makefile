@@ -22,7 +22,8 @@ SRCS_C	= Client/main.c \
 	  Client/socket.c
 SRCS_S	= Server/main.c \
 	  Server/client.c \
-	  Server/select.c
+	  Server/select.c \
+	  Server/channels.c
 
 OBJS_C	= $(SRCS_C:.c=.o)
 OBJS_S	= $(SRCS_S:.c=.o)

@@ -21,6 +21,12 @@ typedef struct		s_client
   struct s_client	*next;
 }			t_client;
 
+typedef struct		s_channel
+{
+  char			*name;
+  struct s_channel	*next;
+}			t_channel;
+
 void		exit_signal(int);
 void		add_client(t_client**, int, char*);
 void		remove_client(t_client**, int);
@@ -31,5 +37,7 @@ void		check_clients_fd(t_client*, fd_set*);
 void		my_select(int);
 int		get_bigger_fd(t_client*);
 void		read_client(int, t_client*);
+void		add_channel(t_channel**, char*);
+void		list_channels(t_channel*, int);
 
 #endif /* !SERVER_H_ */
