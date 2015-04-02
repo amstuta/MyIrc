@@ -5,38 +5,35 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Fri Mar 27 17:06:29 2015 arthur
+** Last update Thu Apr  2 16:06:19 2015 arthur
 */
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include "server.h"
 
-void			accept_client(int fd, t_client **clients)
+int			get_bigger_fd()
 {
-  int			cs;
-  struct sockaddr_in	sin_c;
-  int			c_len;
+  int			res;
+  t_client		*tmp;
 
-  c_len = sizeof(sin_c);
-  cs = accept(fd, (struct sockaddr*)&sin_c, (socklen_t*)&c_len);
-  if (cs == -1)
-    return ;
-  write(1, "Client successfully connected\n", 30);
-  add_client(clients, cs, "Jimmy");
+  res = 0;
+  tmp = g_clients;
+  while (tmp)
+    {
+      if (tmp->fd > res)
+	res = tmp->fd;
+      tmp = tmp->next;
+    }
+  return (res);
 }
 
-void			set_clients(t_client **clients, fd_set *readfds)
+void			set_clients(fd_set *readfds)
 {
   t_client		*tmp;
 
-  tmp = *clients;
+  tmp = g_clients;
   while (tmp)
     {
       FD_SET(tmp->fd, readfds);
@@ -57,15 +54,15 @@ t_client		*init_clients(int fd)
   return (res);
 }
 
-void			check_clients_fd(t_client *clients, fd_set *readfds)
+void			check_clients_fd(fd_set *readfds)
 {
   t_client		*tmp;
 
-  tmp = clients;
+  tmp = g_clients;
   while (tmp)
     {
       if (FD_ISSET(tmp->fd, readfds) != 0)
-	read_client(tmp->fd, clients);
+	read_client(tmp->fd);
       tmp = tmp->next;
     }
 }
@@ -73,19 +70,18 @@ void			check_clients_fd(t_client *clients, fd_set *readfds)
 void			my_select(int fd)
 {
   fd_set		readfds;
-  t_client		*clients;
   int			bigger_fd;
 
-  clients = init_clients(fd);
+  g_clients = init_clients(fd);
   while (1)
     {
       FD_ZERO(&readfds);
-      set_clients(&clients, &readfds);
-      bigger_fd = get_bigger_fd(clients);
+      set_clients(&readfds);
+      bigger_fd = get_bigger_fd();
       if (select(bigger_fd + 1, &readfds, NULL, NULL, NULL) == -1)
 	break;
       if (FD_ISSET(fd, &readfds) != 0)
-	accept_client(fd, &clients);
-      check_clients_fd(clients, &readfds);
+	accept_client(fd);
+      check_clients_fd(&readfds);
     }
 }

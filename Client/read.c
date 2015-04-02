@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Fri Mar 27 16:59:10 2015 arthur
+** Last update Thu Apr  2 11:31:17 2015 arthur
 */
 
 #include <sys/select.h>
@@ -21,6 +21,8 @@ void		read_cmd_std(int fd)
   if ((rd = read(0, buf, 4095)) <= 0)
     return ;
   buf[rd] = 0;
+  if (!check_cmd(buf))
+    return ;
   write(fd, buf, strlen(buf));
 }
 

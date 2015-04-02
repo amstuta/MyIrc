@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Fri Mar 27 17:06:29 2015 arthur
+** Last update Thu Apr  2 16:27:38 2015 arthur
 */
 
 #include <signal.h>
@@ -20,38 +20,17 @@
 #include <netdb.h>
 #include "server.h"
 
-int			get_bigger_fd(t_client *clients)
-{
-  int			res;
-  t_client		*tmp;
+t_client		*g_clients;
 
-  res = 0;
-  tmp = clients;
-  while (tmp)
-    {
-      if (tmp->fd > res)
-	res = tmp->fd;
-      tmp = tmp->next;
-    }
-  return (res);
-}
-
-void			read_client(int fd, t_client *clients)
+void			read_client(int fd)
 {
   int			rd;
   char			buf[4096];
-  t_client		*tmp;
 
-  tmp = clients->next;
-  if ((rd = read(fd, buf, 4095)) == -1)
+  if ((rd = read(fd, buf, 4095)) <= 0)
     return ;
-  buf[rd] = 0;
-  while (tmp)
-    {
-      if (tmp->fd != fd)
-	write(tmp->fd, buf, strlen(buf));
-      tmp = tmp->next;
-    }
+  buf[rd - 1] = 0;
+  exec_cmd(fd, buf);
 }
 
 void			create_socket(int port)

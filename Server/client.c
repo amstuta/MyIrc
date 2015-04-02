@@ -5,14 +5,34 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:32:10 2015 arthur
-** Last update Fri Mar 27 16:43:15 2015 arthur
+** Last update Thu Apr  2 16:05:59 2015 arthur
 */
 
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include "server.h"
 
-void		add_client(t_client **clients, int fd, char *login)
+void			accept_client(int fd)
+{
+  int			cs;
+  struct sockaddr_in	sin_c;
+  int			c_len;
+
+  c_len = sizeof(sin_c);
+  cs = accept(fd, (struct sockaddr*)&sin_c, (socklen_t*)&c_len);
+  if (cs == -1)
+    return ;
+  write(1, "Client successfully connected\n", 30);
+  add_client(cs, "");
+}
+
+void		add_client(int fd, char *login)
 {
   t_client	*new;
   t_client	*tmp;
@@ -23,24 +43,24 @@ void		add_client(t_client **clients, int fd, char *login)
   new->login = strdup(login);
   new->channel = NULL;
   new->next = NULL;
-  if (*clients == NULL)
-    *clients = new;
+  if (g_clients == NULL)
+    g_clients = new;
   else
     {
-      tmp = *clients;
+      tmp = g_clients;
       while (tmp->next)
 	tmp = tmp->next;
       tmp->next = new;
     }
 }
 
-void		remove_client(t_client **clients, int fd)
+void		remove_client(int fd)
 {
   t_client	*tmp;
   t_client	*save;
 
   save = NULL;
-  tmp = *clients;
+  tmp = g_clients;
   while (tmp && tmp->fd != fd)
     {
       save = tmp;
@@ -49,7 +69,7 @@ void		remove_client(t_client **clients, int fd)
   if (tmp == NULL)
     return ;
   if (save == NULL)
-    *clients = tmp->next;
+    g_clients = tmp->next;
   else
     save->next = tmp->next;
   free(tmp->login);
