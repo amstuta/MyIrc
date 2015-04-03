@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Thu Apr  2 11:31:17 2015 arthur
+** Last update Fri Apr  3 11:35:07 2015 arthur
 */
 
 #include <sys/select.h>
@@ -35,6 +35,7 @@ void		read_cmd_serv(int fd)
     return ;
   buf[rd] = 0;
   write(1, buf, strlen(buf));
+  write(1, "\n", 1);
 }
 
 void		select_entry(int fd)

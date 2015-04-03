@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:32:10 2015 arthur
-** Last update Thu Apr  2 16:05:59 2015 arthur
+** Last update Fri Apr  3 11:47:04 2015 arthur
 */
 
 #include <string.h>
@@ -30,6 +30,34 @@ void			accept_client(int fd)
     return ;
   write(1, "Client successfully connected\n", 30);
   add_client(cs, "");
+}
+
+int		get_user_fd(char *user)
+{
+  t_client	*tmp;
+
+  tmp = g_clients;
+  while (tmp)
+    {
+      if (!strcmp(tmp->login, user))
+	return (tmp->fd);
+      tmp = tmp->next;
+    }
+  return (0);
+}
+
+char		*get_login_from_fd(int fd)
+{
+  t_client	*tmp;
+
+  tmp = g_clients;
+  while (tmp)
+    {
+      if (tmp->fd == fd)
+	return (tmp->login);
+      tmp = tmp->next;
+    }
+  return (NULL);
 }
 
 void		add_client(int fd, char *login)

@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Thu Apr  2 16:27:38 2015 arthur
+** Last update Fri Apr  3 12:02:17 2015 arthur
 */
 
 #include <signal.h>
@@ -21,6 +21,7 @@
 #include "server.h"
 
 t_client		*g_clients;
+t_channel		*g_channels;
 
 void			read_client(int fd)
 {
@@ -61,9 +62,14 @@ void			create_socket(int port)
 
 void			exit_signal(int sig)
 {
-  // Envoi msg a tous les fds
-  // Close tous les fds
   (void)sig;
+  g_clients = g_clients->next;
+  while (g_clients)
+    {
+      write(g_clients->fd, "Server closed connection", 24);
+      close(g_clients->fd);
+      g_clients = g_clients->next;
+    }
   write(1, "Exiting...", 11);
   exit(EXIT_SUCCESS);
 }

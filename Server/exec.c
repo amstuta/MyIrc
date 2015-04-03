@@ -5,10 +5,11 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Thu Apr  2 14:47:43 2015 arthur
-** Last update Thu Apr  2 16:30:38 2015 arthur
+** Last update Fri Apr  3 11:59:54 2015 arthur
 */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include "server.h"
 
@@ -28,7 +29,7 @@ char			*get_args(char *cmd)
 int			get_idx_cmd(char *cmd)
 {
   int			i;
-  static char		*tab[10] = {
+  static const char    	*tab[10] = {
     "/nick", "/list", "/join",
     "/part", "/users", "/msg",
     "/send_file", "/accept_file", NULL
@@ -44,6 +45,22 @@ int			get_idx_cmd(char *cmd)
   return (-1);
 }
 
+void			send_msg_all(int fd, char *msg)
+{
+  t_client		*tmp;
+  char			*channel;
+
+  tmp = g_clients;
+  if (!(channel = get_client_channel(fd)))
+    return ;
+  while (tmp)
+    {
+      if (!strcmp(channel, tmp->channel))
+	write(tmp->fd, msg, strlen(msg));
+      tmp = tmp->next;
+    }
+}
+
 void			exec_cmd(int fd, char *buf)
 {
   int			idx;
@@ -53,6 +70,7 @@ void			exec_cmd(int fd, char *buf)
   };
 
   if ((idx = get_idx_cmd(buf)) == -1)
-    return ;
-  tab[idx](fd, get_args(buf));
+    send_msg_all(fd, buf);
+  else
+    tab[idx](fd, get_args(buf));
 }

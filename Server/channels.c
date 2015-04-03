@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:32:10 2015 arthur
-** Last update Fri Mar 27 16:43:15 2015 arthur
+** Last update Fri Apr  3 11:11:07 2015 arthur
 */
 
 #include <string.h>
@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include "server.h"
 
-void		add_channel(t_channel **channels, char *name)
+void		add_channel(char *name)
 {
   t_channel	*new;
   t_channel	*tmp;
@@ -22,60 +22,71 @@ void		add_channel(t_channel **channels, char *name)
     return ;
   new->name = strdup(name);
   new->next = NULL;
-  if (*channels == NULL)
-    *channels = new;
+  if (g_channels == NULL)
+    g_channels = new;
   else
     {
-      tmp = *channels;
+      tmp = g_channels;
       while (tmp->next)
 	tmp = tmp->next;
       tmp->next = new;
     }
 }
 
-void		list_channels(t_channel *channels, int fd)
+int		channel_exists(char *c)
 {
-  int		idx;
   t_channel	*tmp;
-  char		buf[4096];
 
-  idx = 0;
-  tmp = channels;
+  tmp = g_channels;
   while (tmp)
     {
-      if ((idx + strlen(tmp->name)) < 4096)
-	{
-	  strcat(buf, tmp->name);
-	  strcat(buf, " ");
-	  idx += strlen(tmp->name) + 1;
-	}
+      if (!strcmp(tmp->name, c))
+	return (1);
       tmp = tmp->next;
     }
-  buf[idx] = 0;
-  write(fd, buf, strlen(buf));
+  return (0);
 }
 
-void		search_channels(t_channel *channels, char *s, int fd)
+char		*get_client_channel(int fd)
 {
-  int		idx;
-  t_channel	*tmp;
-  char		buf[4096];
+  t_client	*tmp;
 
-  idx = 0;
-  tmp = channels;
+  tmp = g_clients;
   while (tmp)
     {
-      if ((idx + strlen(tmp->name)) < 4096)
-	{
-	  if (strstr(tmp->name, s))
-	    {
-	      strcat(buf, tmp->name);
-	      strcat(buf, " ");
-	      idx += strlen(tmp->name) + 1;
-	    }
-	}
+      if (tmp->fd == fd)
+	return (tmp->channel);
+    }
+  return (NULL);
+}
+
+void		list_channels(int fd)
+{
+  t_channel	*tmp;
+
+  tmp = g_channels;
+  write(fd, "Available channels:", 19);
+  while (tmp)
+    {
+      write(fd, tmp->name, strlen(tmp->name));
       tmp = tmp->next;
     }
-  buf[idx] = 0;
-  write(fd, buf, strlen(buf));
+  write(fd, "----------", 10);
+}
+
+void		search_channels(int fd, char *s)
+{
+  t_channel	*tmp;
+
+  tmp = g_channels;
+  write(fd, "Channels matching with \"", 24);
+  write(fd, s, strlen(s));
+  write(fd, "\": ", 3);
+  while (tmp)
+    {
+      if (strstr(tmp->name, s))
+	write(fd, tmp->name, strlen(tmp->name));
+      tmp = tmp->next;
+    }
+  write(fd, "----------", 10);
 }
