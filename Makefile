@@ -5,7 +5,7 @@
 ## Login   <amstuta@epitech.net>
 ##
 ## Started on  Fri Mar 27 12:59:11 2015 arthur
-## Last update Fri Apr  3 12:26:38 2015 arthur
+## Last update Mon Apr  6 16:38:22 2015 arthur
 ##
 
 RM	= rm -f
@@ -20,7 +20,8 @@ NAME2	= server
 SRCS_C	= Client/main.c \
 	  Client/read.c \
 	  Client/socket.c \
-	  Client/cmd.c
+	  Client/cmd.c \
+	  Client/termcaps.c
 SRCS_S	= Server/main.c \
 	  Server/client.c \
 	  Server/select.c \
@@ -35,7 +36,7 @@ OBJS_S	= $(SRCS_S:.c=.o)
 all: $(NAME1) $(NAME2)
 
 $(NAME1):$(OBJS_C)
-	 $(CC) $(OBJS_C) -o $(NAME1)
+	 $(CC) $(OBJS_C) -o $(NAME1) -lncurses
 
 $(NAME2):$(OBJS_S)
 	 $(CC) $(OBJS_S) -o $(NAME2)

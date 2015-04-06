@@ -5,12 +5,11 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:04:16 2015 arthur
-** Last update Thu Apr  2 11:45:11 2015 arthur
+** Last update Mon Apr  6 15:46:41 2015 arthur
 */
 
 #ifndef CLIENT_H_
 # define CLIENT_H_
-
 # define LINE_SIZE	4096
 # define SERVER		"/server"
 # define NICK		"/nick"
@@ -22,6 +21,8 @@
 # define SEND		"/send_file"
 # define ACCEPT		"/accept_file"
 
+#include <termios.h>
+
 void	read_cmd();
 void	select_entry(int);
 void	read_cmd_serv(int);
@@ -29,5 +30,7 @@ void	read_cmd_str(int);
 int	create_socket(char*, int);
 int	connect_to_serv(char*);
 int	check_cmd(char*);
+int	set_canon_off(struct termios*);
+void	reset_canon(struct termios*);
 
 #endif
