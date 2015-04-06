@@ -30,6 +30,15 @@ typedef struct		s_channel
   struct s_channel	*next;
 }			t_channel;
 
+typedef struct		s_packet
+{
+  char			*prefix;
+  char			*command;
+  char			*arg[256];
+  char			*trailer;
+  int			argn;
+}			t_packet;
+
 void			exit_signal(int);
 void			add_client(int, char*);
 void			remove_client(int);
