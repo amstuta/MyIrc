@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:17:26 2015 arthur
-** Last update Fri Mar 27 16:59:32 2015 arthur
+** Last update Mon Apr  6 16:16:24 2015 arthur
 */
 
 #include <string.h>
@@ -46,7 +46,7 @@ int			connect_to_serv(char *cmd)
   char			*ip;
   char			*tmp;
   int			port;
-  
+
   strtok(cmd, " ");
   ip = strtok(NULL, ":");
   if (!(tmp = strtok(NULL, "\n")))
