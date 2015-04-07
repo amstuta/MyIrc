@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Mon Apr  6 16:39:26 2015 arthur
+** Last update Tue Apr  7 11:14:50 2015 arthur
 */
 
 #include <term.h>
@@ -95,7 +95,7 @@ int		read_cmd_in(int *sfd)
 void		read_cmd()
 {
   int		sfd;
-  char		*clr;
+  //char		*clr;
 
   sfd = -1;
   write(1, " > ", 3);

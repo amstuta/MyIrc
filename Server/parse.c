@@ -72,9 +72,9 @@ int	fill_packet(char *cmd, t_packet *pack)
   get_params(&cmd[idx], pack);
 }
 
-int main(int ac, char **av)
+int		main(int ac, char **av)
 {
-  t_packet lul;
+  t_packet	lul;
   int i = 0;
   if (ac == 2)
     {
