@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:32:10 2015 arthur
-** Last update Fri Apr  3 11:11:07 2015 arthur
+** Last update Tue Apr  7 13:39:17 2015 arthur
 */
 
 #include <string.h>
@@ -40,7 +40,7 @@ int		channel_exists(char *c)
   tmp = g_channels;
   while (tmp)
     {
-      if (!strcmp(tmp->name, c))
+      if (tmp->name && c && !strcmp(tmp->name, c))
 	return (1);
       tmp = tmp->next;
     }

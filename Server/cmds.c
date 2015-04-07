@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Thu Apr  2 15:17:38 2015 arthur
-** Last update Fri Apr  3 11:52:49 2015 arthur
+** Last update Tue Apr  7 13:42:41 2015 arthur
 */
 
 #include <stdio.h>
@@ -83,18 +83,22 @@ void		part(int fd, char *args)
 void		users(int fd, char *args)
 {
   t_client	*tmp;
+  char		*chan;
 
   tmp = g_clients;
-  if (!channel_exists(args))
+  (void)args;
+  if (!(chan = get_client_channel(fd)))
+    return ;
+  /*  if (!channel_exists(args))
     {
       write(fd, "Error: channel doesn't exist", 28);
       return ;
-    }
+      }*/
   write(fd, "Channel users:", 14);
   while (tmp)
     {
-      if (args && tmp->channel)
-	if (!strcmp(tmp->channel, args))
+      if (tmp->channel)
+	if (!strcmp(tmp->channel, chan))
 	  write(fd, tmp->login, strlen(tmp->login));
       tmp = tmp->next;
     }

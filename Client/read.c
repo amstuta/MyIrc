@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Tue Apr  7 11:14:50 2015 arthur
+** Last update Tue Apr  7 13:30:26 2015 arthur
 */
 
 #include <term.h>
@@ -14,19 +14,34 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include "client.h"
 
 void		read_cmd_std(int fd)
 {
   int		rd;
-  char		buf[4096];
+  char		buf[LINE_SIZE];
+  char		line[LINE_SIZE];
 
-  if ((rd = read(0, buf, 4095)) <= 0)
-    return ;
-  buf[rd] = 0;
-  if (!check_cmd(buf))
-    return ;
-  write(fd, buf, strlen(buf));
+  memset(line, 0, LINE_SIZE);
+  while (1)
+    {
+      if ((rd = read(0, buf, LINE_SIZE - 1)) <= 0)
+	return ;
+      buf[rd] = 0;
+      if (strlen(buf) > 0 && buf[0] == 10)
+	break ;
+      else
+	{
+	  strcat(line, buf);
+	  write(1, buf, strlen(buf));
+	  memset(buf, 0, LINE_SIZE);
+	}
+    }
+  /*if (!check_cmd(buf))
+    return ;*/
+  write(fd, line, strlen(line));
+  write(1, "\n", 1);
 }
 
 void		read_cmd_serv(int fd)
@@ -37,7 +52,9 @@ void		read_cmd_serv(int fd)
   if ((rd = read(fd, buf, 4095)) <= 0)
     return ;
   buf[rd] = 0;
+  write(1, "\x1b[34m", 7);
   write(1, buf, strlen(buf));
+  write(1, "\x1b[0m", 6);
   write(1, "\n", 1);
 }
 
@@ -47,19 +64,16 @@ void		select_entry(int fd)
 
   while (1)
     {
+      write(1, " > ", 3);
       FD_ZERO(&readfds);
       FD_SET(0, &readfds);
       FD_SET(fd, &readfds);
       if (select(fd + 1, &readfds, NULL, NULL, NULL) == -1)
 	return ;
       if (FD_ISSET(0, &readfds))
-	{
-	  read_cmd_std(fd);
-	}
+	read_cmd_std(fd);
       if (FD_ISSET(fd, &readfds))
-	{
-	  read_cmd_serv(fd);
-	}
+	read_cmd_serv(fd);
     }
 }
 
@@ -95,14 +109,16 @@ int		read_cmd_in(int *sfd)
 void		read_cmd()
 {
   int		sfd;
-  //char		*clr;
+  char		*clr;
+  char		buf[LINE_SIZE];
 
   sfd = -1;
   write(1, " > ", 3);
   if (read_cmd_in(&sfd) == -1)
     return ;
-  /*if ((clr = tgetstr("clear", NULL)) != NULL)
-    write(1, clr, strlen(clr));*/
-  // Clear ecran
+  if (!tgetent(buf, getenv("TERM")))
+    return ;
+  if ((clr = tgetstr("cl", NULL)) != NULL)
+    write(1, clr, strlen(clr));
   select_entry(sfd);
 }

@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Fri Apr  3 12:02:17 2015 arthur
+** Last update Tue Apr  7 13:23:01 2015 arthur
 */
 
 #include <signal.h>
@@ -29,8 +29,15 @@ void			read_client(int fd)
   char			buf[4096];
 
   if ((rd = read(fd, buf, 4095)) <= 0)
-    return ;
-  buf[rd - 1] = 0;
+    {
+      write(1, "Invalid read\n", 15);
+      return ;
+    }
+  buf[rd] = 0;
+  
+  write(1, buf, strlen(buf));
+  write(1, "\n", 1);
+  
   exec_cmd(fd, buf);
 }
 

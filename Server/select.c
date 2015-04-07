@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Fri Apr  3 12:19:29 2015 arthur
+** Last update Tue Apr  7 13:34:21 2015 arthur
 */
 
 #include <stdlib.h>
@@ -50,7 +50,7 @@ t_client		*init_clients(int fd)
     exit(EXIT_FAILURE);
   res->fd = fd;
   res->login = "";
-  res->channel = NULL;
+  res->channel = "";
   res->next = NULL;
   return (res);
 }

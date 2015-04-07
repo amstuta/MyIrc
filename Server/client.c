@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:32:10 2015 arthur
-** Last update Fri Apr  3 11:47:04 2015 arthur
+** Last update Tue Apr  7 13:32:07 2015 arthur
 */
 
 #include <string.h>
@@ -32,9 +32,9 @@ void			accept_client(int fd)
   add_client(cs, "");
 }
 
-int		get_user_fd(char *user)
+int			get_user_fd(char *user)
 {
-  t_client	*tmp;
+  t_client		*tmp;
 
   tmp = g_clients;
   while (tmp)
@@ -46,9 +46,9 @@ int		get_user_fd(char *user)
   return (0);
 }
 
-char		*get_login_from_fd(int fd)
+char			*get_login_from_fd(int fd)
 {
-  t_client	*tmp;
+  t_client		*tmp;
 
   tmp = g_clients;
   while (tmp)
@@ -60,16 +60,16 @@ char		*get_login_from_fd(int fd)
   return (NULL);
 }
 
-void		add_client(int fd, char *login)
+void			add_client(int fd, char *login)
 {
-  t_client	*new;
-  t_client	*tmp;
+  t_client		*new;
+  t_client		*tmp;
 
   if (!(new = malloc(sizeof(t_client))))
     return ;
   new->fd = fd;
   new->login = strdup(login);
-  new->channel = NULL;
+  new->channel = "";
   new->next = NULL;
   if (g_clients == NULL)
     g_clients = new;
@@ -82,10 +82,10 @@ void		add_client(int fd, char *login)
     }
 }
 
-void		remove_client(int fd)
+void			remove_client(int fd)
 {
-  t_client	*tmp;
-  t_client	*save;
+  t_client		*tmp;
+  t_client		*save;
 
   save = NULL;
   tmp = g_clients;
