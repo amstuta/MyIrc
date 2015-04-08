@@ -5,16 +5,18 @@
 ** Login   <elkaim_r@epitech.net>
 ** 
 ** Started on  Tue Apr  7 12:55:31 2015 elkaim raphael
-** Last update Wed Apr  8 11:51:51 2015 arthur
+** Last update Wed Apr  8 12:48:22 2015 elkaim raphael
 */
 
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include "server.h"
 
 void	add_command(t_cmd **com, char *pack, e_bool flag)
 {
-  t_com	*new;
-  t_com	*tmp;
+  t_cmd	*new;
+  t_cmd	*tmp;
 
   if ((new = malloc(sizeof(t_cmd))) == NULL)
     exit(EXIT_FAILURE);
@@ -34,14 +36,14 @@ void	add_command(t_cmd **com, char *pack, e_bool flag)
 
 void	remove_command(t_cmd **root, t_cmd *del)
 {
-  t_com	*tmp;
+  t_cmd	*tmp;
 
   if (*root == NULL)
     return ;
   tmp = *root;
   if (*root == del)
     {
-      *root = *root->next;
+      *root = (*root)->next;
       free(del);
       return ;
     }
