@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Wed Apr  8 13:54:24 2015 arthur
+** Last update Wed Apr  8 14:01:04 2015 arthur
 */
 
 #include <sys/select.h>
@@ -105,8 +105,6 @@ int		read_cmd_in(int *sfd)
 void		read_cmd()
 {
   int		sfd;
-  char		*clr;
-  char		buf[LINE_SIZE];
 
   sfd = -1;
   write(1, " > ", 3);
