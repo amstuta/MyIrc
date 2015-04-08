@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:30:08 2015 arthur
-** Last update Wed Apr  8 11:53:40 2015 arthur
+** Last update Wed Apr  8 12:37:04 2015 elkaim raphael
 */
 
 #ifndef SERVER_H_
@@ -64,7 +64,7 @@ void			check_clients_fd_in(fd_set*);
 void			check_clients_fd_out(fd_set*);
 void			my_select(int);
 int			get_bigger_fd();
-void			read_client(int);
+void			read_client(t_client *);
 void			add_channel(char*);
 void			list_channels(int);
 void			search_channels(int, char*);
