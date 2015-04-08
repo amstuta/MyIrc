@@ -5,21 +5,21 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:04:16 2015 arthur
-** Last update Wed Apr  8 11:07:51 2015 arthur
+** Last update Wed Apr  8 13:59:35 2015 arthur
 */
 
 #ifndef CLIENT_H_
 # define CLIENT_H_
 # define LINE_SIZE	4096
 # define SERVER		"/server"
-# define NICK		"/nick"
-# define LIST		"/list"
-# define JOIN		"/join"
-# define PART		"/part"
-# define USERS		"/users"
-# define MSG		"/msg"
-# define SEND		"/send_file"
-# define ACCEPT		"/accept_file"
+# define NICK		"NICK"
+# define LIST		"LIST"
+# define JOIN		"JOIN"
+# define PART		"PART"
+# define USERS		"NAMES"
+# define MSG		"PRIVMSG"
+# define SEND		"SF"
+# define ACCEPT		"AF"
 
 void	read_cmd();
 void	select_entry(int);

@@ -5,11 +5,9 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Tue Apr  7 13:30:26 2015 arthur
+** Last update Wed Apr  8 13:54:24 2015 arthur
 */
 
-#include <term.h>
-#include <curses.h>
 #include <sys/select.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,8 +36,6 @@ void		read_cmd_std(int fd)
 	  memset(buf, 0, LINE_SIZE);
 	}
     }
-  /*if (!check_cmd(buf))
-    return ;*/
   write(fd, line, strlen(line));
   write(1, "\n", 1);
 }
@@ -52,7 +48,7 @@ void		read_cmd_serv(int fd)
   if ((rd = read(fd, buf, 4095)) <= 0)
     return ;
   buf[rd] = 0;
-  write(1, "\x1b[34m", 7);
+  write(1, "\r\x1b[34m", 7);
   write(1, buf, strlen(buf));
   write(1, "\x1b[0m", 6);
   write(1, "\n", 1);
@@ -116,9 +112,5 @@ void		read_cmd()
   write(1, " > ", 3);
   if (read_cmd_in(&sfd) == -1)
     return ;
-  if (!tgetent(buf, getenv("TERM")))
-    return ;
-  if ((clr = tgetstr("cl", NULL)) != NULL)
-    write(1, clr, strlen(clr));
   select_entry(sfd);
 }
