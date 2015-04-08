@@ -5,13 +5,13 @@
 ** Login   <elkaim_r@epitech.net>
 ** 
 ** Started on  Tue Apr  7 12:55:31 2015 elkaim raphael
-** Last update Tue Apr  7 13:35:52 2015 elkaim raphael
+** Last update Wed Apr  8 11:51:51 2015 arthur
 */
 
 #include <stdlib.h>
 #include "server.h"
 
-void	add_command(t_cmd **com, char *pack)
+void	add_command(t_cmd **com, char *pack, e_bool flag)
 {
   t_com	*new;
   t_com	*tmp;
@@ -19,6 +19,7 @@ void	add_command(t_cmd **com, char *pack)
   if ((new = malloc(sizeof(t_cmd))) == NULL)
     exit(EXIT_FAILURE);
   strcpy(new->com, pack);
+  new->in_out = flag;
   new->next = NULL;
   if (*com == NULL)
     *com = new;
@@ -58,8 +59,31 @@ void	command_to_list(char *buffer, t_cmd **root)
   value = buffer;
   while ((res = strtok(value, "\r\n")) != NULL)
     {
-      add_command(root, res);
+      add_command(root, res, true);
       if (value)
 	value = NULL;
+    }
+}
+
+void	write_reps(int fd, t_cmd **cmds)
+{
+  t_cmd	*tmp;
+  t_cmd	*save;
+
+  tmp = *cmds;
+  save = NULL;
+  while (tmp)
+    {
+      if (save != NULL)
+	{
+	  remove_command(cmds, save);
+	  save = NULL;
+	}
+      if(tmp->in_out == false)
+	{
+	  write(fd, tmp->com, strlen(tmp->com));
+	  save = tmp;
+	}
+      tmp = tmp->next;
     }
 }

@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:30:08 2015 arthur
-** Last update Wed Apr  8 11:26:44 2015 elkaim raphael
+** Last update Wed Apr  8 11:53:40 2015 arthur
 */
 
 #ifndef SERVER_H_
@@ -84,6 +84,10 @@ void			accept_file(int, char*);
 void			send_msg_all(int, char*);
 int			get_user_fd(char*);
 char			*get_login_from_fd(int);
+void			add_command(t_cmd**, char*, e_bool);
+void			remove_command(t_cmd**, t_cmd*);
+void			command_to_list(char*, t_cmd**);
+void			write_reps(int, t_cmd**);
 
 extern t_client		*g_clients;
 extern t_channel	*g_channels;
