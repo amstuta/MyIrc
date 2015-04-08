@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 15:30:08 2015 arthur
-** Last update Fri Apr  3 12:18:48 2015 arthur
+** Last update Wed Apr  8 11:26:44 2015 elkaim raphael
 */
 
 #ifndef SERVER_H_
@@ -16,11 +16,26 @@
 
 typedef void(*function)(int, char*);
 
+typedef enum
+  {
+    true, 
+    false
+  }			e_bool;
+
+typedef struct		s_cmd
+{
+  char			com[LINE_SIZE];
+  e_bool		in_out;
+  struct s_cmd		*next;
+}			t_cmd;
+
 typedef struct		s_client
 {
   int			fd;
   char			*login;
   char			*channel;
+  t_cmd			*cmd_in;
+  t_cmd			*cmd_out;
   struct s_client	*next;
 }			t_client;
 
