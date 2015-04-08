@@ -5,7 +5,7 @@
 ## Login   <amstuta@epitech.net>
 ##
 ## Started on  Fri Mar 27 12:59:11 2015 arthur
-## Last update Mon Apr  6 16:38:22 2015 arthur
+## Last update Wed Apr  8 11:08:27 2015 arthur
 ##
 
 RM	= rm -f
@@ -20,8 +20,7 @@ NAME2	= server
 SRCS_C	= Client/main.c \
 	  Client/read.c \
 	  Client/socket.c \
-	  Client/cmd.c \
-	  Client/termcaps.c
+	  Client/cmd.c
 SRCS_S	= Server/main.c \
 	  Server/client.c \
 	  Server/select.c \

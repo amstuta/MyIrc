@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:07:57 2015 arthur
-** Last update Mon Apr  6 15:47:12 2015 arthur
+** Last update Wed Apr  8 11:07:27 2015 arthur
 */
 
 #include <stdlib.h>
@@ -14,14 +14,6 @@
 
 int			main()
 {
-  struct termios	term;
-
-  if (set_canon_off(&term) == -1)
-    {
-      printf("Couldn't set raw mode, exiting...\n");
-      return (EXIT_FAILURE);
-    }
   read_cmd();
-  reset_canon(&term);
   return (EXIT_SUCCESS);
 }
