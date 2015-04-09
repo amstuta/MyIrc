@@ -5,7 +5,7 @@
 ** Login   <elkaim_r@epitech.net>
 ** 
 ** Started on  Tue Apr  7 12:55:31 2015 elkaim raphael
-** Last update Wed Apr  8 12:48:22 2015 elkaim raphael
+** Last update Wed Apr  8 13:56:33 2015 elkaim raphael
 */
 
 #include <stdlib.h>
@@ -81,7 +81,7 @@ void	write_reps(int fd, t_cmd **cmds)
 	  remove_command(cmds, save);
 	  save = NULL;
 	}
-      if(tmp->in_out == false)
+      if (tmp->in_out == false)
 	{
 	  write(fd, tmp->com, strlen(tmp->com));
 	  save = tmp;

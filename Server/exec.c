@@ -5,12 +5,13 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Thu Apr  2 14:47:43 2015 arthur
-** Last update Fri Apr  3 11:59:54 2015 arthur
+** Last update Wed Apr  8 17:58:08 2015 elkaim raphael
 */
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 #include "server.h"
 
 char			*get_args(char *cmd)
@@ -30,9 +31,9 @@ int			get_idx_cmd(char *cmd)
 {
   int			i;
   static const char    	*tab[10] = {
-    "/nick", "/list", "/join",
-    "/part", "/users", "/msg",
-    "/send_file", "/accept_file", NULL
+    "NICK", "LIST", "JOIN",
+    "PART", "NAMES", "PRIVMSG",
+    "SF", "AF", NULL
   };
 
   i = 0;
@@ -61,16 +62,25 @@ void			send_msg_all(int fd, char *msg)
     }
 }
 
-void			exec_cmd(int fd, char *buf)
+void			exec_cmd(t_client *cli)
 {
   int			idx;
+  t_cmd			*tmp;
+  t_packet		res;
   static function	tab[8] = {
     &nick, &list, &join, &part, &users,
     &msg, &send_file, &accept_file
   };
 
-  if ((idx = get_idx_cmd(buf)) == -1)
-    send_msg_all(fd, buf);
-  else
-    tab[idx](fd, get_args(buf));
+  tmp = cli->cmd_in;
+  while (tmp)
+    {
+      fill_packet(tmp->com, &res);
+      printf("voici la commande: %s  \n", res.command);
+      if ((idx = get_idx_cmd(res.command)) == -1)
+	printf("invalid command\n");
+      else
+	tab[idx](cli->fd, &res);
+      tmp = tmp->next;
+    }
 }

@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Tue Apr  7 13:34:21 2015 arthur
+** Last update Wed Apr  8 16:39:54 2015 elkaim raphael
 */
 
 #include <stdlib.h>
@@ -49,8 +49,8 @@ t_client		*init_clients(int fd)
   if (!(res = malloc(sizeof(t_client))))
     exit(EXIT_FAILURE);
   res->fd = fd;
-  res->login = "";
-  res->channel = "";
+  strcpy(res->login, "");
+  strcpy(res->channel, "");
   res->next = NULL;
   return (res);
 }
@@ -72,7 +72,7 @@ void			my_select(int fd)
 	break;
       if (FD_ISSET(fd, &readfds) != 0)
 	accept_client(fd);
-      check_clients_fd_in(&readfds);
+      check_clients_fd_in(&readfds, NULL);
       check_clients_fd_out(&writefds);
     }
 }

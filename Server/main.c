@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 13:08:12 2015 arthur
-** Last update Wed Apr  8 12:41:12 2015 elkaim raphael
+** Last update Wed Apr  8 16:51:21 2015 elkaim raphael
 */
 
 #include <signal.h>
@@ -23,7 +23,7 @@
 t_client		*g_clients;
 t_channel		*g_channels;
 
-void			read_client(t_client *cli)
+int			read_client(t_client *cli)
 {
   int			rd;
   char			buf[4096];
@@ -31,13 +31,14 @@ void			read_client(t_client *cli)
   if ((rd = read(cli->fd, buf, 4095)) <= 0)
     {
       write(1, "Invalid read\n", 15);
-      return ;
+      return (1);
     }
-  command_to_list(buf, &cli->cmd_in);
   buf[rd] = 0;
+  command_to_list(buf, &cli->cmd_in);
   write(1, buf, strlen(buf));
   write(1, "\n", 1);
-  //exec_cmd(fd, buf);
+  exec_cmd(cli);
+  return (0);
 }
 
 void			create_socket(int port)

@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Thu Apr  2 15:17:38 2015 arthur
-** Last update Tue Apr  7 13:42:41 2015 arthur
+** Last update Wed Apr  8 18:46:50 2015 elkaim raphael
 */
 
 #include <stdio.h>
@@ -13,39 +13,38 @@
 #include <string.h>
 #include "server.h"
 
-void		nick(int fd, char *args)
+void		nick(int fd, t_packet *pack)
 {
   t_client	*tmp;
 
-  //Checker nom
-  if (!args)
+  if (!pack->arg[0])
     return ;
   tmp = g_clients;
   while (tmp)
     {
       if (tmp->fd == fd)
 	{
-	  tmp->login = strdup(args);
+	  strcpy(tmp->login, pack->arg[0]);
 	  return ;
 	}
       tmp = tmp->next;
     }
 }
 
-void		list(int fd, char *args)
+void		list(int fd, t_packet *pack)
 {
-  if (!args)
+  if (!pack->arg[0])
     list_channels(fd);
   else
-    search_channels(fd, args);
+    search_channels(fd, pack->arg[0]);
 }
 
-void		join(int fd, char *args)
+void		join(int fd, t_packet *pack)
 {
   t_client	*tmp;
 
   tmp = g_clients;
-  if (!args || strlen(args) > 20)
+  if (!pack->arg[0] || strlen(pack->arg[0]) > 20)
     {
       write(fd, "Error: invalid channel name", 27);
       return ;
@@ -53,14 +52,14 @@ void		join(int fd, char *args)
   while (tmp)
     {
       if (tmp->fd == fd)
-	tmp->channel = strdup(args);
+	strcpy(tmp->channel, pack->arg[0]);
       tmp = tmp->next;
     }
-  if (!channel_exists(args))
-    add_channel(args);
+  if (!channel_exists(pack->arg[0]))
+    add_channel(pack->arg[0]);
 }
 
-void		part(int fd, char *args)
+void		part(int fd, t_packet *pack)
 {
   t_client	*tmp;
 
@@ -69,26 +68,26 @@ void		part(int fd, char *args)
     {
       if (tmp->fd == fd)
 	{
-	  if (strcmp(tmp->channel, args))
+	  if (strcmp(tmp->channel, pack->arg[0]))
 	    {
 	      write(fd, "Error: you didn't join that channel", 35);
 	      return ;
 	    }
-	  tmp->channel = NULL;
+	  strcpy(tmp->channel, "");
 	}
       tmp = tmp->next;
     }
 }
 
-void		users(int fd, char *args)
+void		users(int fd, t_packet *pack) 
 {
   t_client	*tmp;
   char		*chan;
 
   tmp = g_clients;
-  (void)args;
   if (!(chan = get_client_channel(fd)))
     return ;
+  (void)pack;
   /*  if (!channel_exists(args))
     {
       write(fd, "Error: channel doesn't exist", 28);
@@ -105,7 +104,7 @@ void		users(int fd, char *args)
   write(fd, "----------", 10);
 }
 
-void		msg(int fd, char *args)
+void		msg(int fd, t_packet *pack)
 {
   int		cfd;
   char		*msg;
@@ -114,10 +113,10 @@ void		msg(int fd, char *args)
   char		buf[LINE_SIZE];
 
   memset(buf, 0, LINE_SIZE);
-  if (!(user = strtok(args, " ")) ||
+  if (!(user = strtok(pack->arg[0], " ")) ||
       !(msg = strtok(NULL, "\0")))
     return ;
-  if (!args || !(cfd = get_user_fd(user)))
+  if (!pack->arg[0] || !(cfd = get_user_fd(user)))
     return ;
   if ((sender = get_login_from_fd(fd)))
     strcpy(buf, sender);
@@ -126,14 +125,14 @@ void		msg(int fd, char *args)
   write(cfd, buf, strlen(buf));
 }
 
-void		send_file(int fd, char *args)
+void		send_file(int fd, t_packet *pack)
 {
   (void)fd;
-  (void)args;
+  (void)pack;
 }
 
-void		accept_file(int fd, char *args)
+void		accept_file(int fd, t_packet *pack)
 {
   (void)fd;
-  (void)args;
+  (void)pack;
 }

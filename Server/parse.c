@@ -1,3 +1,13 @@
+/*
+** parse.c for irc in /home/elkaim_r/projects/c/PSU_2014_myirc/Server
+** 
+** Made by elkaim raphael
+** Login   <elkaim_r@epitech.net>
+** 
+** Started on  Wed Apr  8 14:00:34 2015 elkaim raphael
+** Last update Wed Apr  8 15:13:48 2015 elkaim raphael
+*/
+
 #include <string.h>
 #include "server.h"
 
@@ -41,6 +51,7 @@ int	get_params(char *cmd, t_packet *packet)
     }
   packet->arg[i] = NULL;
   packet->argn = i;
+  return (0);
 }
 
 int	get_trailer(char *cmd, t_packet *packet)
@@ -60,30 +71,14 @@ int	get_trailer(char *cmd, t_packet *packet)
 int	fill_packet(char *cmd, t_packet *pack)
 {
   int	idx;
-  
+
   idx = 0;
   if (get_prefixe(cmd, pack) == 0)
     {
       cmd = index(cmd, ' ') + 1;
     }
   get_command(cmd, pack, &idx);
-  printf("idx:%d\n", idx);
   get_trailer(&cmd[idx], pack);
   get_params(&cmd[idx], pack);
-}
-
-int		main(int ac, char **av)
-{
-  t_packet	lul;
-  int i = 0;
-  if (ac == 2)
-    {
-      fill_packet(av[1], &lul);
-      printf("prefixe:%s \n command:%s \n trailer: %s \n", lul.prefix, lul.command, lul.trailer);
-      printf("arguments:\n");
-      for (i = 0;lul.arg[i] != NULL; i++)
-	{
-	  printf("arg%d: %s \n", i, lul.arg[i]);
-	}
-    }
+  return (0);
 }
