@@ -63,30 +63,50 @@ char		*get_client_channel(int fd)
 void		list_channels(int fd)
 {
   t_channel	*tmp;
+  char		buff[LINE_SIZE];
 
   tmp = g_channels;
-  write(fd, "Available channels:", 19);
+  memset(buff, 0, LINE_SIZE);
+  send_msg(fd, "321 Channels :list channels");
+  //  write(fd, "Available channels:", 19);
   while (tmp)
     {
-      write(fd, tmp->name, strlen(tmp->name));
+      send_msg(fd, strcat(strcat(strcat(buff, "322 "), tmp->name), " 1 :")); // norme
+      //write(fd, tmp->name, strlen(tmp->name));
       tmp = tmp->next;
     }
-  write(fd, "----------", 10);
+  send_msg(fd, "323 :End of list");
 }
 
 void		search_channels(int fd, char *s)
 {
   t_channel	*tmp;
+  char		buff[LINE_SIZE];
 
   tmp = g_channels;
-  write(fd, "Channels matching with \"", 24);
-  write(fd, s, strlen(s));
-  write(fd, "\": ", 3);
+  memset(buff, 0, LINE_SIZE);
+  send_msg(fd, "321 Channels :list channels");
+  //  write(fd, "Available channels:", 19);
   while (tmp)
     {
       if (strstr(tmp->name, s))
-	write(fd, tmp->name, strlen(tmp->name));
+	send_msg(fd, strcat(strcat(strcat(buff, "322 "), tmp->name), " 1 :")); // norme
+      //write(fd, tmp->name, strlen(tmp->name));
       tmp = tmp->next;
     }
-  write(fd, "----------", 10);
+  //=====
+  send_msg(fd, "323 :End of list");
+}
+
+void		broadcast(char *message, char *channel)
+{
+  t_client	*tmp;
+
+  tmp = g_clients->next;
+  while (tmp)
+    {
+      if (!strcmp(tmp->channel, channel))
+	send_msg(tmp->fd, message);
+      tmp = tmp->next;
+    }
 }

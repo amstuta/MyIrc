@@ -14,7 +14,7 @@ CC	= gcc
 
 CFLAGS	= -Wall -Wextra -Werror
 
-NAME1	= client
+NAME	= client
 NAME2	= server
 
 SRCS_C	= Client/main.c \
@@ -34,10 +34,10 @@ SRCS_S	= Server/main.c \
 OBJS_C	= $(SRCS_C:.c=.o)
 OBJS_S	= $(SRCS_S:.c=.o)
 
-all: $(NAME1) $(NAME2)
+all: $(NAME) $(NAME2)
 
-$(NAME1):$(OBJS_C)
-	 $(CC) $(OBJS_C) -o $(NAME1) -lncurses
+$(NAME):$(OBJS_C)
+	 $(CC) $(OBJS_C) -o $(NAME)
 
 $(NAME2):$(OBJS_S)
 	 $(CC) $(OBJS_S) -o $(NAME2)
@@ -46,7 +46,7 @@ clean:
 	 $(RM) $(OBJS_C) $(OBJS_S)
 
 fclean:	 clean
-	 $(RM) $(NAME1) $(NAME2)
+	 $(RM) $(NAME) $(NAME2)
 
 re:	 fclean all
 

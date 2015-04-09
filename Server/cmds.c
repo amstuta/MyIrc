@@ -17,7 +17,14 @@ void		nick(int fd, t_packet *pack)
 {
   t_client	*tmp;
 
+  //RFC -> GUD
+  //NORME -> NOT GUD
   if (!pack->arg[0])
+    {
+      send_msg(fd, "461 NICK :Needs more params");
+      return ;
+    }
+  if (check_nick(pack->arg[0]) == 1)
     return ;
   tmp = g_clients;
   while (tmp)
@@ -33,6 +40,8 @@ void		nick(int fd, t_packet *pack)
 
 void		list(int fd, t_packet *pack)
 {
+  //RFC GUD
+  // NORME NOT GUD
   if (!pack->arg[0])
     list_channels(fd);
   else
@@ -42,26 +51,33 @@ void		list(int fd, t_packet *pack)
 void		join(int fd, t_packet *pack)
 {
   t_client	*tmp;
+  char		buff[LINE_SIZE];
 
   tmp = g_clients;
+  memset(buff, 0, LINE_SIZE);
   if (!pack->arg[0] || strlen(pack->arg[0]) > 20)
     {
-      write(fd, "Error: invalid channel name", 27);
+      send_msg(fd, "461 NICK :Needs more params");
       return ;
     }
   while (tmp)
     {
       if (tmp->fd == fd)
-	strcpy(tmp->channel, pack->arg[0]);
+	{
+	  strcpy(tmp->channel, pack->arg[0]);
+	  break ;
+	}
       tmp = tmp->next;
     }
   if (!channel_exists(pack->arg[0]))
     add_channel(pack->arg[0]);
+  broadcast(strcat(strcat(strcat(strcat(buff, ":"), tmp->login), " JOIN :"), pack->arg[0]), pack->arg[0]);
 }
 
 void		part(int fd, t_packet *pack)
 {
   t_client	*tmp;
+  char		buff[LINE_SIZE];
 
   tmp = g_clients;
   while (tmp)
@@ -70,19 +86,22 @@ void		part(int fd, t_packet *pack)
 	{
 	  if (strcmp(tmp->channel, pack->arg[0]))
 	    {
-	      write(fd, "Error: you didn't join that channel", 35);
+	      send_msg(fd, "442 :You're not on that channel");
+	      //write(fd, "Error: you didn't join that channel", 35);
 	      return ;
 	    }
 	  strcpy(tmp->channel, "");
 	}
       tmp = tmp->next;
     }
+  broadcast(strcat(strcat(strcat(strcat(buff, ":"), tmp->login), " PART :"), pack->arg[0]), pack->arg[0]);
 }
 
 void		users(int fd, t_packet *pack) 
 {
   t_client	*tmp;
   char		*chan;
+  char		buff[LINE_SIZE];
 
   tmp = g_clients;
   if (!(chan = get_client_channel(fd)))
@@ -93,36 +112,52 @@ void		users(int fd, t_packet *pack)
       write(fd, "Error: channel doesn't exist", 28);
       return ;
       }*/
-  write(fd, "Channel users:", 14);
+  //write(fd, "Channel users:", 14);
+  strcat(strcat(strcat(buff, "353 "), chan), " :");
   while (tmp)
     {
       if (tmp->channel)
 	if (!strcmp(tmp->channel, chan))
-	  write(fd, tmp->login, strlen(tmp->login));
+	  {
+	    strcat(buff, tmp->login);
+	    strcat(buff, " ");
+	  }
       tmp = tmp->next;
     }
-  write(fd, "----------", 10);
+  send_msg(fd, buff);
+  send_msg(fd, strcat(strcat(strcpy(buff, "366 "), chan), " :End of name list"));
 }
 
 void		msg(int fd, t_packet *pack)
 {
-  int		cfd;
-  char		*msg;
-  char		*user;
+  //  int		cfd;
+  //char		*msg;
+  //char		*user;
   char		*sender;
   char		buf[LINE_SIZE];
 
   memset(buf, 0, LINE_SIZE);
-  if (!(user = strtok(pack->arg[0], " ")) ||
+  if (!pack->trailer)
+    send_msg(fd, "412 :No text to send");
+  if (!pack->arg[0])
+    send_msg(fd, "411 :No recipient given");
+  if ((sender = get_login_from_fd(fd)))
+    {
+      strcat(buf, ":");
+      strcat(buf, sender);
+      strcat(buf, " ");
+    }
+  strcat(buf, "PRIVMSG :");
+  strcat(buf, pack->trailer);
+  broadcast(buf, pack->arg[0]);
+  /*  if (!(user = strtok(pack->arg[0], " ")) ||
       !(msg = strtok(NULL, "\0")))
     return ;
   if (!pack->arg[0] || !(cfd = get_user_fd(user)))
     return ;
-  if ((sender = get_login_from_fd(fd)))
-    strcpy(buf, sender);
   strcat(buf, ": ");
   strcat(buf, msg);
-  write(cfd, buf, strlen(buf));
+  write(cfd, buf, strlen(buf));*/
 }
 
 void		send_file(int fd, t_packet *pack)

@@ -11,6 +11,7 @@
 #ifndef SERVER_H_
 # define SERVER_H_
 # define LINE_SIZE	4096
+# define END		"\r\n"
 
 # include <sys/select.h>
 
@@ -93,6 +94,9 @@ int			get_command(char *, t_packet *, int *);
 int			get_params(char *, t_packet *);
 int			get_trailer(char *, t_packet *);
 int			fill_packet(char *, t_packet *);
+void			send_msg(int, char *);
+char			*broadcast(char *, char *);
+int			check_nick(char *, int );
 
 extern t_client		*g_clients;
 extern t_channel	*g_channels;
