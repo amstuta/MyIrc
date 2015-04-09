@@ -24,7 +24,7 @@ void		nick(int fd, t_packet *pack)
       send_msg(fd, "461 NICK :Needs more params");
       return ;
     }
-  if (check_nick(pack->arg[0]) == 1)
+  if (check_nick(pack->arg[0], fd) == 1)
     return ;
   tmp = g_clients;
   while (tmp)
@@ -79,7 +79,8 @@ void		part(int fd, t_packet *pack)
   t_client	*tmp;
   char		buff[LINE_SIZE];
 
-  tmp = g_clients;
+  tmp = g_clients->next;
+  memset(buff, 0, LINE_SIZE);
   while (tmp)
     {
       if (tmp->fd == fd)
@@ -87,14 +88,14 @@ void		part(int fd, t_packet *pack)
 	  if (strcmp(tmp->channel, pack->arg[0]))
 	    {
 	      send_msg(fd, "442 :You're not on that channel");
-	      //write(fd, "Error: you didn't join that channel", 35);
 	      return ;
 	    }
-	  strcpy(tmp->channel, "");
+	  break ;
 	}
       tmp = tmp->next;
     }
   broadcast(strcat(strcat(strcat(strcat(buff, ":"), tmp->login), " PART :"), pack->arg[0]), pack->arg[0]);
+  strcpy(tmp->channel, "");
 }
 
 void		users(int fd, t_packet *pack) 
@@ -141,6 +142,8 @@ void		msg(int fd, t_packet *pack)
     send_msg(fd, "412 :No text to send");
   if (!pack->arg[0])
     send_msg(fd, "411 :No recipient given");
+  if (!pack->trailer || !pack->arg[0])
+    return ;
   if ((sender = get_login_from_fd(fd)))
     {
       strcat(buf, ":");

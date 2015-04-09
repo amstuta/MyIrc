@@ -83,4 +83,5 @@ void			exec_cmd(t_client *cli)
 	tab[idx](cli->fd, &res);
       tmp = tmp->next;
     }
+  cli->cmd_in = NULL;
 }

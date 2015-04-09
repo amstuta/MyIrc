@@ -29,7 +29,9 @@ SRCS_S	= Server/main.c \
 	  Server/cmds.c \
 	  Server/io.c \
 	  Server/circ_buff.c \
-	  Server/parse.c
+	  Server/parse.c \
+	  Server/msg.c \
+	  Server/check.c
 
 OBJS_C	= $(SRCS_C:.c=.o)
 OBJS_S	= $(SRCS_S:.c=.o)

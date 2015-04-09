@@ -95,7 +95,7 @@ int			get_params(char *, t_packet *);
 int			get_trailer(char *, t_packet *);
 int			fill_packet(char *, t_packet *);
 void			send_msg(int, char *);
-char			*broadcast(char *, char *);
+void			broadcast(char *, char *);
 int			check_nick(char *, int );
 
 extern t_client		*g_clients;
