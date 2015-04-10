@@ -73,6 +73,7 @@ void		list_channels(int fd)
     {
       send_msg(fd, strcat(strcat(strcat(buff, "322 "), tmp->name), " 1 :")); // norme
       //write(fd, tmp->name, strlen(tmp->name));
+      strcpy(buff, "");
       tmp = tmp->next;
     }
   send_msg(fd, "323 :End of list");
@@ -92,6 +93,7 @@ void		search_channels(int fd, char *s)
       if (strstr(tmp->name, s))
 	send_msg(fd, strcat(strcat(strcat(buff, "322 "), tmp->name), " 1 :")); // norme
       //write(fd, tmp->name, strlen(tmp->name));
+      strcpy(buff, "");
       tmp = tmp->next;
     }
   //=====

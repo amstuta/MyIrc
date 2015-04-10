@@ -10,7 +10,7 @@ int		alphanum(char *str)
   i = 0;
   while (str[i])
     {
-      if (!isalnum(str[i]))
+      if (!isalnum(str[i]) && str[i] != '_')
 	return (0);
       ++i;
     }
@@ -26,7 +26,7 @@ int		check_nick(char *nick, int fd)
   memset(buff, 0, LINE_SIZE);
   if (strlen(nick) > 9 || !alphanum(nick))
     {
-      send_msg(fd, strcat(strcat(strcat(buff, "432 "), nick), ":Erroneus Nickname")); //norme
+      send_msg(fd, strcat(strcat(strcat(buff, "432 "), nick), " :Erroneus Nickname")); //norme
       return (1);
     }
   while (tmp)

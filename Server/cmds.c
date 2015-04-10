@@ -13,164 +13,138 @@
 #include <string.h>
 #include "server.h"
 
-void		nick(int fd, t_packet *pack)
+void		nick(t_client *cli, t_packet *pack)
 {
-  t_client	*tmp;
-
-  //RFC -> GUD
-  //NORME -> NOT GUD
   if (!pack->arg[0])
     {
-      send_msg(fd, "461 NICK :Needs more params");
+      send_msg(cli->fd, "461 NICK :Needs more params");
       return ;
     }
-  if (check_nick(pack->arg[0], fd) == 1)
+  if (check_nick(pack->arg[0], cli->fd) == 1)
     return ;
-  tmp = g_clients;
-  while (tmp)
+  strcpy(cli->login, pack->arg[0]);
+}
+
+void		userlog(t_client *cli, t_packet *pack)
+{
+  if (!pack->arg[0] || !pack->arg[1] || !pack->arg[2] || !pack->trailer)
     {
-      if (tmp->fd == fd)
-	{
-	  strcpy(tmp->login, pack->arg[0]);
-	  return ;
-	}
-      tmp = tmp->next;
+      send_msg(cli->fd, "461 USER :Needs more params");
+      return ;
+    }
+  if (strcmp(cli->rname, "") && strcmp(cli->login, ""))
+    {
+      send_msg(cli->fd, "462 :You cannot Reregister");
+      return ;
+    }
+  strcpy(cli->rname, pack->trailer);
+}
+
+void		passer(t_client *cli, t_packet *pack)
+{
+  if (!pack->arg[0])
+    {
+      send_msg(cli->fd, "461 PASS :Needs more params");
+      return ;
+    }
+  if (strcmp(cli->rname, "") && strcmp(cli->login, ""))
+    {
+      send_msg(cli->fd, "462 :You cannot Reregister");
+      return ;
     }
 }
 
-void		list(int fd, t_packet *pack)
+void		list(t_client *cli, t_packet *pack)
 {
   //RFC GUD
   // NORME NOT GUD
   if (!pack->arg[0])
-    list_channels(fd);
+    list_channels(cli->fd);
   else
-    search_channels(fd, pack->arg[0]);
+    search_channels(cli->fd, pack->arg[0]);
 }
 
-void		join(int fd, t_packet *pack)
+void		join(t_client *cli, t_packet *pack)
 {
-  t_client	*tmp;
   char		buff[LINE_SIZE];
 
-  tmp = g_clients;
   memset(buff, 0, LINE_SIZE);
-  if (!pack->arg[0] || strlen(pack->arg[0]) > 20)
+  if (!pack->arg[0])
     {
-      send_msg(fd, "461 NICK :Needs more params");
+      send_msg(cli->fd, "461 JOIN :Needs more params");
       return ;
     }
-  while (tmp)
-    {
-      if (tmp->fd == fd)
-	{
-	  strcpy(tmp->channel, pack->arg[0]);
-	  break ;
-	}
-      tmp = tmp->next;
-    }
+  strcpy(cli->channel, pack->arg[0]);
   if (!channel_exists(pack->arg[0]))
     add_channel(pack->arg[0]);
-  broadcast(strcat(strcat(strcat(strcat(buff, ":"), tmp->login), " JOIN :"), pack->arg[0]), pack->arg[0]);
+  broadcast(strcat(strcat(strcat(strcat(buff, ":"), cli->login), " JOIN :"), pack->arg[0]), pack->arg[0]);
+  users(cli, pack);
 }
 
-void		part(int fd, t_packet *pack)
+void		part(t_client *cli, t_packet *pack)
 {
-  t_client	*tmp;
   char		buff[LINE_SIZE];
 
-  tmp = g_clients->next;
   memset(buff, 0, LINE_SIZE);
-  while (tmp)
+  if (strcmp(cli->channel, pack->arg[0]))
     {
-      if (tmp->fd == fd)
-	{
-	  if (strcmp(tmp->channel, pack->arg[0]))
-	    {
-	      send_msg(fd, "442 :You're not on that channel");
-	      return ;
-	    }
-	  break ;
-	}
-      tmp = tmp->next;
+      send_msg(cli->fd, "442 :You're not on that channel");
+      return ;
     }
-  broadcast(strcat(strcat(strcat(strcat(buff, ":"), tmp->login), " PART :"), pack->arg[0]), pack->arg[0]);
-  strcpy(tmp->channel, "");
+  broadcast(strcat(strcat(strcat(strcat(buff, ":"), cli->login), " PART :"), pack->arg[0]), pack->arg[0]);
+  strcpy(cli->channel, "");
 }
 
-void		users(int fd, t_packet *pack) 
+void		users(t_client *cli, t_packet *pack) 
 {
   t_client	*tmp;
-  char		*chan;
   char		buff[LINE_SIZE];
 
   tmp = g_clients;
-  if (!(chan = get_client_channel(fd)))
-    return ;
   (void)pack;
-  /*  if (!channel_exists(args))
-    {
-      write(fd, "Error: channel doesn't exist", 28);
-      return ;
-      }*/
-  //write(fd, "Channel users:", 14);
-  strcat(strcat(strcat(buff, "353 "), chan), " :");
+  memset(buff, 0, LINE_SIZE);
+  strcat(strcat(strcat(buff, "353 "), cli->channel), " :");
   while (tmp)
     {
       if (tmp->channel)
-	if (!strcmp(tmp->channel, chan))
+	if (!strcmp(tmp->channel, cli->channel))
 	  {
 	    strcat(buff, tmp->login);
 	    strcat(buff, " ");
 	  }
       tmp = tmp->next;
     }
-  send_msg(fd, buff);
-  send_msg(fd, strcat(strcat(strcpy(buff, "366 "), chan), " :End of name list"));
+  send_msg(cli->fd, buff);
+  send_msg(cli->fd, strcat(strcat(strcpy(buff, "366 "), cli->channel), " :End of name list"));
 }
 
-void		msg(int fd, t_packet *pack)
+void		msg(t_client *cli, t_packet *pack)
 {
-  //  int		cfd;
-  //char		*msg;
-  //char		*user;
-  char		*sender;
   char		buf[LINE_SIZE];
 
   memset(buf, 0, LINE_SIZE);
   if (!pack->trailer)
-    send_msg(fd, "412 :No text to send");
+    send_msg(cli->fd, "412 :No text to send");
   if (!pack->arg[0])
-    send_msg(fd, "411 :No recipient given");
+    send_msg(cli->fd, "411 :No recipient given");
   if (!pack->trailer || !pack->arg[0])
     return ;
-  if ((sender = get_login_from_fd(fd)))
-    {
-      strcat(buf, ":");
-      strcat(buf, sender);
-      strcat(buf, " ");
-    }
+  strcat(buf, ":");
+  strcat(buf, cli->login);
+  strcat(buf, " ");
   strcat(buf, "PRIVMSG :");
   strcat(buf, pack->trailer);
   broadcast(buf, pack->arg[0]);
-  /*  if (!(user = strtok(pack->arg[0], " ")) ||
-      !(msg = strtok(NULL, "\0")))
-    return ;
-  if (!pack->arg[0] || !(cfd = get_user_fd(user)))
-    return ;
-  strcat(buf, ": ");
-  strcat(buf, msg);
-  write(cfd, buf, strlen(buf));*/
 }
 
-void		send_file(int fd, t_packet *pack)
+void		send_file(t_client *cli, t_packet *pack)
 {
-  (void)fd;
+  (void)cli;
   (void)pack;
 }
 
-void		accept_file(int fd, t_packet *pack)
+void		accept_file(t_client *cli, t_packet *pack)
 {
-  (void)fd;
+  (void)cli;
   (void)pack;
 }

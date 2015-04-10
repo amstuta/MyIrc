@@ -33,6 +33,8 @@ typedef struct		s_client
   int			fd;
   char			login[256];
   char			channel[256];
+  char			rname[256];
+  int			registered;
   t_cmd			*cmd_in;
   t_cmd			*cmd_out;
   struct s_client	*next;
@@ -53,7 +55,7 @@ typedef struct		s_packet
   int			argn;
 }			t_packet;
 
-typedef void(*function)(int, t_packet *);
+typedef void(*function)(t_client *, t_packet *);
 
 void			exit_signal(int);
 void			add_client(int, char*);
@@ -73,15 +75,17 @@ int			channel_exists(char*);
 char			*get_client_channel(int);
 void			exec_cmd(t_client *);
 char			*get_args(char*);
-int			get_idx_cmd(char*);
-void			nick(int, t_packet *);
-void			list(int, t_packet *);
-void			join(int, t_packet *);
-void			part(int, t_packet *);
-void			users(int, t_packet *);
-void			msg(int, t_packet *);
-void			send_file(int, t_packet *);
-void			accept_file(int, t_packet *);
+int			get_idx_cmd(char *, t_client *);
+void			nick(t_client *, t_packet *);
+void			list(t_client *, t_packet *);
+void			join(t_client *, t_packet *);
+void			part(t_client *, t_packet *);
+void			users(t_client *, t_packet *);
+void			userlog(t_client *, t_packet *);
+void			passer(t_client *, t_packet *);
+void			msg(t_client *, t_packet *);
+void			send_file(t_client *, t_packet *);
+void			accept_file(t_client *, t_packet *);
 void			send_msg_all(int, char *);
 int			get_user_fd(char*);
 char			*get_login_from_fd(int);

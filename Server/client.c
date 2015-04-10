@@ -74,6 +74,8 @@ void			add_client(int fd, char *login)
   new->next = NULL;
   new->cmd_in = NULL;
   new->cmd_out = NULL;
+  new->registered = 0;
+  strcpy(new->rname, "");
   if (g_clients == NULL)
     g_clients = new;
   else

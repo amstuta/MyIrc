@@ -27,20 +27,28 @@ char			*get_args(char *cmd)
   return (NULL);
 }
 
-int			get_idx_cmd(char *cmd)
+int			get_idx_cmd(char *cmd, t_client *cli)
 {
   int			i;
-  static const char    	*tab[10] = {
+  static const char	*tab[11] = {
     "NICK", "LIST", "JOIN",
     "PART", "NAMES", "PRIVMSG",
-    "SF", "AF", NULL
+    "SF", "AF", "USER", "PASS", NULL
   };
 
   i = 0;
   while (tab[i])
     {
       if (!strncmp(cmd, tab[i], strlen(tab[i])))
-	return (i);
+	{
+	  if (i != 0 && i < 8 &&
+	      (!strcmp(cli->login, "") || !strcmp(cli->rname, "")))
+	    {
+	      send_msg(cli->fd, "451 :you are not registered yet");
+	      return (-1);
+	    }
+	  return (i);
+	}
       ++i;
     }
   return (-1);
@@ -67,9 +75,10 @@ void			exec_cmd(t_client *cli)
   int			idx;
   t_cmd			*tmp;
   t_packet		res;
-  static function	tab[8] = {
+  static function	tab[10] = {
     &nick, &list, &join, &part, &users,
-    &msg, &send_file, &accept_file
+    &msg, &send_file, &accept_file, &userlog,
+    &passer
   };
 
   tmp = cli->cmd_in;
@@ -77,10 +86,10 @@ void			exec_cmd(t_client *cli)
     {
       fill_packet(tmp->com, &res);
       printf("voici la commande: %s  \n", res.command);
-      if ((idx = get_idx_cmd(res.command)) == -1)
+      if ((idx = get_idx_cmd(res.command, cli)) == -1)
 	printf("invalid command\n");
       else
-	tab[idx](cli->fd, &res);
+	tab[idx](cli, &res);
       tmp = tmp->next;
     }
   cli->cmd_in = NULL;
