@@ -50,7 +50,7 @@ t_client		*init_clients(int fd)
     exit(EXIT_FAILURE);
   res->fd = fd;
   strcpy(res->login, "");
-  strcpy(res->channel, "");
+  res->channel = NULL;
   res->next = NULL;
   return (res);
 }

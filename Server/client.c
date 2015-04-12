@@ -68,12 +68,12 @@ void			add_client(int fd, char *login)
   if (!(new = malloc(sizeof(t_client))))
     return ;
   new->fd = fd;
-  strcpy(new->login,"");
+  strcpy(new->login, "");
   strncat(new->login, login, 255);
-  strcpy(new->channel,"");
+  new->channel = NULL;
   new->next = NULL;
   new->cmd_in = NULL;
-  new->cmd_out = NULL;
+  strcpy(new->curbuff, "");
   new->registered = 0;
   strcpy(new->rname, "");
   if (g_clients == NULL)

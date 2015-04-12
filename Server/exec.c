@@ -33,7 +33,7 @@ int			get_idx_cmd(char *cmd, t_client *cli)
   static const char	*tab[11] = {
     "NICK", "LIST", "JOIN",
     "PART", "NAMES", "PRIVMSG",
-    "SF", "AF", "USER", "PASS", NULL
+    "USER", "PASS", "QUIT", NULL
   };
 
   i = 0;
@@ -41,7 +41,7 @@ int			get_idx_cmd(char *cmd, t_client *cli)
     {
       if (!strncmp(cmd, tab[i], strlen(tab[i])))
 	{
-	  if (i != 0 && i < 8 &&
+	  if (i != 0 && i != 6 && i != 7 &&
 	      (!strcmp(cli->login, "") || !strcmp(cli->rname, "")))
 	    {
 	      send_msg(cli->fd, "451 :you are not registered yet");
@@ -54,22 +54,6 @@ int			get_idx_cmd(char *cmd, t_client *cli)
   return (-1);
 }
 
-void			send_msg_all(int fd, char *msg)
-{
-  t_client		*tmp;
-  char			*channel;
-
-  tmp = g_clients;
-  if (!(channel = get_client_channel(fd)))
-    return ;
-  while (tmp)
-    {
-      if (!strcmp(channel, tmp->channel))
-	write(tmp->fd, msg, strlen(msg));
-      tmp = tmp->next;
-    }
-}
-
 void			exec_cmd(t_client *cli)
 {
   int			idx;
@@ -77,17 +61,15 @@ void			exec_cmd(t_client *cli)
   t_packet		res;
   static function	tab[10] = {
     &nick, &list, &join, &part, &users,
-    &msg, &send_file, &accept_file, &userlog,
-    &passer
+    &msg, &userlog, &passer, &quit
   };
 
   tmp = cli->cmd_in;
   while (tmp)
     {
       fill_packet(tmp->com, &res);
-      printf("voici la commande: %s  \n", res.command);
       if ((idx = get_idx_cmd(res.command, cli)) == -1)
-	printf("invalid command\n");
+	send_msg(cli->fd, "421 com :Unknown command");
       else
 	tab[idx](cli, &res);
       tmp = tmp->next;

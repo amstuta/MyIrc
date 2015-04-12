@@ -12,15 +12,18 @@
 # define SERVER_H_
 # define LINE_SIZE	4096
 # define END		"\r\n"
+# define CO		strcat
+# define CP		strcpy
+# define NOCHAN		" :No such channel"
+# define JOIN		" JOIN :"
 
 # include <sys/select.h>
 
 typedef enum
   {
-    true, 
+    true,
     false
   }			e_bool;
-
 typedef struct		s_cmd
 {
   char			com[LINE_SIZE];
@@ -28,23 +31,24 @@ typedef struct		s_cmd
   struct s_cmd		*next;
 }			t_cmd;
 
+typedef struct		s_channel
+{
+  char			name[256];
+  struct s_channel	*next;
+}			t_channel;
+
 typedef struct		s_client
 {
   int			fd;
   char			login[256];
-  char			channel[256];
+  t_channel		*channel;
   char			rname[256];
   int			registered;
+  char			curbuff[4096];
   t_cmd			*cmd_in;
   t_cmd			*cmd_out;
   struct s_client	*next;
 }			t_client;
-
-typedef struct		s_channel
-{
-  char			*name;
-  struct s_channel	*next;
-}			t_channel;
 
 typedef struct		s_packet
 {
@@ -84,8 +88,7 @@ void			users(t_client *, t_packet *);
 void			userlog(t_client *, t_packet *);
 void			passer(t_client *, t_packet *);
 void			msg(t_client *, t_packet *);
-void			send_file(t_client *, t_packet *);
-void			accept_file(t_client *, t_packet *);
+void			quit(t_client *, t_packet *);
 void			send_msg_all(int, char *);
 int			get_user_fd(char*);
 char			*get_login_from_fd(int);
@@ -101,6 +104,9 @@ int			fill_packet(char *, t_packet *);
 void			send_msg(int, char *);
 void			broadcast(char *, char *);
 int			check_nick(char *, int );
+int			has_channel(t_channel **, char *);
+int			del_channel(t_channel **, char *);
+void			add_cchannel(t_channel **, char *);
 
 extern t_client		*g_clients;
 extern t_channel	*g_channels;

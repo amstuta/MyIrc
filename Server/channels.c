@@ -20,7 +20,7 @@ void		add_channel(char *name)
 
   if (!(new = malloc(sizeof(t_channel))) || !name)
     return ;
-  new->name = strdup(name);
+  strcpy(new->name, name);
   new->next = NULL;
   if (g_channels == NULL)
     g_channels = new;
@@ -47,19 +47,6 @@ int		channel_exists(char *c)
   return (0);
 }
 
-char		*get_client_channel(int fd)
-{
-  t_client	*tmp;
-
-  tmp = g_clients;
-  while (tmp)
-    {
-      if (tmp->fd == fd)
-	return (tmp->channel);
-    }
-  return (NULL);
-}
-
 void		list_channels(int fd)
 {
   t_channel	*tmp;
@@ -68,11 +55,10 @@ void		list_channels(int fd)
   tmp = g_channels;
   memset(buff, 0, LINE_SIZE);
   send_msg(fd, "321 Channels :list channels");
-  //  write(fd, "Available channels:", 19);
   while (tmp)
     {
-      send_msg(fd, strcat(strcat(strcat(buff, "322 "), tmp->name), " 1 :")); // norme
-      //write(fd, tmp->name, strlen(tmp->name));
+      send_msg(fd, strcat(strcat(strcat(buff, "322 "),
+				 tmp->name), " 1 :"));
       strcpy(buff, "");
       tmp = tmp->next;
     }
@@ -87,16 +73,14 @@ void		search_channels(int fd, char *s)
   tmp = g_channels;
   memset(buff, 0, LINE_SIZE);
   send_msg(fd, "321 Channels :list channels");
-  //  write(fd, "Available channels:", 19);
   while (tmp)
     {
       if (strstr(tmp->name, s))
-	send_msg(fd, strcat(strcat(strcat(buff, "322 "), tmp->name), " 1 :")); // norme
-      //write(fd, tmp->name, strlen(tmp->name));
+	send_msg(fd, strcat(strcat(strcat(buff, "322 "),
+				   tmp->name), " 1 :"));
       strcpy(buff, "");
       tmp = tmp->next;
     }
-  //=====
   send_msg(fd, "323 :End of list");
 }
 
@@ -105,9 +89,22 @@ void		broadcast(char *message, char *channel)
   t_client	*tmp;
 
   tmp = g_clients->next;
+  if (channel[0] != '#' && channel [0] != '&')
+    {
+      while (tmp)
+	{
+	  if (!strcmp(tmp->login, channel))
+	    {
+	      send_msg(tmp->fd, message);
+	      return ;
+	    }
+	  tmp = tmp->next;
+	}
+      return ;
+    }
   while (tmp)
     {
-      if (!strcmp(tmp->channel, channel))
+      if (has_channel(&tmp->channel, channel))
 	send_msg(tmp->fd, message);
       tmp = tmp->next;
     }

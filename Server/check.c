@@ -26,7 +26,8 @@ int		check_nick(char *nick, int fd)
   memset(buff, 0, LINE_SIZE);
   if (strlen(nick) > 9 || !alphanum(nick))
     {
-      send_msg(fd, strcat(strcat(strcat(buff, "432 "), nick), " :Erroneus Nickname")); //norme
+      send_msg(fd, strcat(strcat(strcat(buff, "432 "), nick),
+			  " :Erroneus Nickname"));
       return (1);
     }
   while (tmp)

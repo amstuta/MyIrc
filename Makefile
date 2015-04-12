@@ -27,11 +27,13 @@ SRCS_S	= Server/main.c \
 	  Server/channels.c \
 	  Server/exec.c \
 	  Server/cmds.c \
+	  Server/cmds2.c \
 	  Server/io.c \
 	  Server/circ_buff.c \
 	  Server/parse.c \
 	  Server/msg.c \
-	  Server/check.c
+	  Server/check.c \
+	  Server/chan_list.c
 
 OBJS_C	= $(SRCS_C:.c=.o)
 OBJS_S	= $(SRCS_S:.c=.o)

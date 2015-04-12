@@ -46,21 +46,9 @@ void		check_clients_fd_out(fd_set *writefds)
 
   tmp = g_clients->next;
   save = NULL;
-  (void)writefds;  
-   while (tmp)
-    {
-      /*if (save)
-	{
-	  remove_client(save->fd);
-	  save = NULL;
-	}
-      if (FD_ISSET(tmp->fd, writefds) != 0)
-	{
-	  write(1, "VOUS ME REJOINDREZ TOUS DANS LA MORT\n", 37);
-	  save = tmp;
-	  }*/
-      tmp = tmp->next;
-    }
+  (void)writefds;
+  while (tmp)
+    tmp = tmp->next;
   if (save)
     {
       remove_client(save->fd);

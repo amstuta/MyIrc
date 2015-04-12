@@ -30,14 +30,18 @@ int			read_client(t_client *cli)
 
   if ((rd = read(cli->fd, buf, 4095)) <= 0)
     {
-      write(1, "Invalid read\n", 15);
+      write(1, "Client disconnected\n", 15);
       return (1);
     }
   buf[rd] = 0;
+  strncat(cli->curbuff, buf, 4096 - strlen(cli->curbuff));
+  if (strstr(cli->curbuff, "\r\n") == NULL)
+    return (0);
   command_to_list(buf, &cli->cmd_in);
-  write(1, buf, strlen(buf));
+  write(1, cli->curbuff, strlen(cli->curbuff));
   write(1, "\n", 1);
   exec_cmd(cli);
+  strcpy(cli->curbuff, "");
   return (0);
 }
 
@@ -73,11 +77,10 @@ void			exit_signal(int sig)
   g_clients = g_clients->next;
   while (g_clients)
     {
-      write(g_clients->fd, "Server closed connection", 24);
+      send_msg(g_clients->fd, "SQUIT :server closed");
       close(g_clients->fd);
       g_clients = g_clients->next;
     }
-  write(1, "Exiting...", 11);
   exit(EXIT_SUCCESS);
 }
 
@@ -89,6 +92,7 @@ int			main(int ac, char **av)
       return (EXIT_FAILURE);
     }
   signal(SIGINT, exit_signal);
+  signal(SIGPIPE, exit_signal);
   create_socket(atoi(av[1]));
   return (EXIT_SUCCESS);
 }
