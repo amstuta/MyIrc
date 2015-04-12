@@ -1,3 +1,13 @@
+/*
+** cmds2.c for irc in /home/elkaim_r/projects/c/PSU_2014_myirc
+** 
+** Made by elkaim raphael
+** Login   <elkaim_r@epitech.net>
+** 
+** Started on  Sun Apr 12 21:00:23 2015 elkaim raphael
+** Last update Sun Apr 12 21:00:26 2015 elkaim raphael
+*/
+
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>

@@ -1,3 +1,13 @@
+/*
+** chan_list.c for irc in /home/elkaim_r/projects/c/PSU_2014_myirc
+** 
+** Made by elkaim raphael
+** Login   <elkaim_r@epitech.net>
+** 
+** Started on  Sun Apr 12 20:59:56 2015 elkaim raphael
+** Last update Sun Apr 12 20:59:57 2015 elkaim raphael
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include "server.h"

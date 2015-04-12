@@ -1,3 +1,13 @@
+/*
+** cmdscli.c for irc in /home/elkaim_r/projects/c/PSU_2014_myirc
+** 
+** Made by elkaim raphael
+** Login   <elkaim_r@epitech.net>
+** 
+** Started on  Sun Apr 12 21:03:08 2015 elkaim raphael
+** Last update Sun Apr 12 21:53:10 2015 elkaim raphael
+*/
+
 #include <string.h>
 #include <stdio.h>
 #include "client.h"
@@ -19,7 +29,7 @@ void	join(char *cmd, int fd)
   chan = chan + 1;
   strcpy(buff, "JOIN #");
   strcpy(channel[idx], chan);
-  idx++;
+  idx = (idx + 1) % 256;
   strncat(buff, chan, 4096 - strlen(buff));
   send_msg(fd, buff);
 }
@@ -44,7 +54,7 @@ void	part(char *cmd, int fd)
 	strcpy(channel[i], "");
       ++i;
     }
-  while ((i - 1) > 0 && strcmp(channel[i - 1], ""))
+  while ((i - 1) > 0 && !strcmp(channel[i - 1], ""))
     {
       --i;
       --idx;
@@ -80,11 +90,10 @@ void	chanmsg(char *cmd, int fd)
 
   if (!idx)
     {
-      printf("error: you haven' t joined a channel yet\n");
+      printf("error: you haven't joined a channel yet\n");
       return ;
     }
   strcpy(buff, "PRIVMSG #");
-  printf("msg: %s\n", cmd);
   strncat(buff, channel[idx - 1], 4096 - strlen(buff));
   strncat(buff, " :", 4096 - strlen(buff));
   strncat(buff, cmd, 4096 - strlen(buff));
@@ -98,38 +107,5 @@ void	users(char *cmd, int fd)
   (void)cmd;
   strcpy(buff, "NAMES #");
   strncat(buff, channel[idx - (idx > 0)], 4096 - strlen(buff));
-  send_msg(fd, buff);
-}
-
-void	list(char *cmd, int fd)
-{
-  char	buff[4096];
-  char	*chan;
-
-  strcpy(buff, "LIST ");
-  chan = index(cmd, ' ');
-  if (chan && chan[1])
-    {
-      chan = chan + 1;
-      strncat(buff, chan + 1, 4096 - strlen(buff));
-    }
-  send_msg(fd, buff);
-}
-
-
-void	nick(char *cmd, int fd)
-{
-  char	buff[4096];
-  char	*chan;
-
-  chan = index(cmd, ' ');
-  chan = chan + 1;
-  if (!chan || !chan[1])
-    {
-      printf("usage: /nick name");
-      return ;
-    }
-  strcpy(buff, "NICK ");
-  strncat(buff, chan + 1, 4096 - strlen(buff));
   send_msg(fd, buff);
 }

@@ -1,3 +1,12 @@
+/*
+** check.c for irc in /home/elkaim_r/projects/c/PSU_2014_myirc
+** 
+** Made by elkaim raphael
+** Login   <elkaim_r@epitech.net>
+** 
+** Started on  Sun Apr 12 21:01:07 2015 elkaim raphael
+** Last update Sun Apr 12 21:01:08 2015 elkaim raphael
+*/
 
 #include <ctype.h>
 #include <string.h>

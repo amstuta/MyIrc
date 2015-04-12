@@ -5,7 +5,7 @@
 ## Login   <amstuta@epitech.net>
 ##
 ## Started on  Fri Mar 27 12:59:11 2015 arthur
-## Last update Wed Apr  8 14:01:38 2015 elkaim raphael
+## Last update Sun Apr 12 21:33:58 2015 elkaim raphael
 ##
 
 RM	= rm -f
@@ -23,7 +23,11 @@ SRCS_C	= Client/main.c \
 	  Client/cmd.c \
 	  Client/cmdscli.c \
 	  Client/msg.c \
-	  Client/exec.c
+	  Client/exec.c \
+	  Client/cmdscli2.c \
+	  Client/parse.c \
+	  Client/cmdssrv.c
+
 SRCS_S	= Server/main.c \
 	  Server/client.c \
 	  Server/select.c \

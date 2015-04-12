@@ -5,7 +5,7 @@
 ** Login   <amstuta@epitech.net>
 **
 ** Started on  Fri Mar 27 16:03:33 2015 arthur
-** Last update Wed Apr  8 14:01:04 2015 arthur
+** Last update Sun Apr 12 21:58:41 2015 elkaim raphael
 */
 
 #include <sys/select.h>
@@ -37,9 +37,7 @@ int		read_cmd_serv(int fd)
   if ((rd = read(fd, buf, 4095)) <= 0)
     return (1);
   buf[rd] = 0;
-  write(1, "\r\x1b[34m", 7);
-  write(1, buf, strlen(buf));
-  write(1, "\x1b[0m", 6);
+  exec_cmd_srv(buf);
   return (0);
 }
 
