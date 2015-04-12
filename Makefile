@@ -20,7 +20,10 @@ NAME2	= server
 SRCS_C	= Client/main.c \
 	  Client/read.c \
 	  Client/socket.c \
-	  Client/cmd.c
+	  Client/cmd.c \
+	  Client/cmdscli.c \
+	  Client/msg.c \
+	  Client/exec.c
 SRCS_S	= Server/main.c \
 	  Server/client.c \
 	  Server/select.c \

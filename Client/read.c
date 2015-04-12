@@ -15,43 +15,32 @@
 #include <stdlib.h>
 #include "client.h"
 
-void		read_cmd_std(int fd)
+int		read_cmd_std(int fd)
 {
   int		rd;
   char		buf[LINE_SIZE];
   char		line[LINE_SIZE];
 
   memset(line, 0, LINE_SIZE);
-  while (1)
-    {
-      if ((rd = read(0, buf, LINE_SIZE - 1)) <= 0)
-	return ;
-      buf[rd] = 0;
-      if (strlen(buf) > 0 && buf[0] == 10)
-	break ;
-      else
-	{
-	  strcat(line, buf);
-	  write(1, buf, strlen(buf));
-	  memset(buf, 0, LINE_SIZE);
-	}
-    }
-  write(fd, line, strlen(line));
-  write(1, "\n", 1);
+  if ((rd = read(0, buf, LINE_SIZE - 1)) <= 0)
+    return (1);
+  buf[rd - 1] = 0;
+  exec_cmd(buf, fd);
+  return (0);
 }
 
-void		read_cmd_serv(int fd)
+int		read_cmd_serv(int fd)
 {
   int		rd;
   char		buf[4096];
 
   if ((rd = read(fd, buf, 4095)) <= 0)
-    return ;
+    return (1);
   buf[rd] = 0;
   write(1, "\r\x1b[34m", 7);
   write(1, buf, strlen(buf));
   write(1, "\x1b[0m", 6);
-  write(1, "\n", 1);
+  return (0);
 }
 
 void		select_entry(int fd)
@@ -67,9 +56,11 @@ void		select_entry(int fd)
       if (select(fd + 1, &readfds, NULL, NULL, NULL) == -1)
 	return ;
       if (FD_ISSET(0, &readfds))
-	read_cmd_std(fd);
+	if (read_cmd_std(fd) == 1)
+	  exit(EXIT_SUCCESS);
       if (FD_ISSET(fd, &readfds))
-	read_cmd_serv(fd);
+	if (read_cmd_serv(fd) == 1)
+	  exit(EXIT_SUCCESS);
     }
 }
 
@@ -77,26 +68,22 @@ int		read_cmd_in(int *sfd)
 {
   int		rd;
   char		buff[LINE_SIZE];
-  char		line[LINE_SIZE];
 
   while (*sfd < 2)
     {
       if ((rd = read(0, buff, LINE_SIZE - 1)) <= 0)
 	return (-1);
       buff[rd] = 0;
-      if (strlen(buff) > 0 && buff[0] == 10)
+      if (strlen(buff) > 0)
 	{
-	  if (!strncmp(line, SERVER, strlen(SERVER)))
-	    *sfd = connect_to_serv(line);
+	  if (!strncmp(buff, SERVER, strlen(SERVER)))
+	    {
+	      if ((*sfd = connect_to_serv(buff)) != -1)
+		return (0);
+	    }
 	  else
 	    write(1, "You must be connected before sending messages\n", 46);
-	  memset(line, 0, LINE_SIZE);
 	  write(1, " > ", 3);
-	}
-      else
-	{
-	  strcat(line, buff);
-	  write(1, buff, strlen(buff));
 	}
     }
   return (0);

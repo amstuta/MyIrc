@@ -18,15 +18,25 @@
 # define PART		"PART"
 # define USERS		"NAMES"
 # define MSG		"PRIVMSG"
-# define SEND		"SF"
-# define ACCEPT		"AF"
+
+typedef void(*function)(char *, int);
 
 void	read_cmd();
 void	select_entry(int);
-void	read_cmd_serv(int);
-void	read_cmd_str(int);
-int	create_socket(char*, int);
-int	connect_to_serv(char*);
-int	check_cmd(char*);
+int	read_cmd_serv(int);
+int	read_cmd_str(int);
+int	create_socket(char *, int);
+int	connect_to_serv(char *);
+int	check_cmd(char *);
+void	exec_cmd(char *, int);
+void	nick(char *, int);
+void	users(char *, int);
+void	msg(char *, int);
+void	chanmsg(char *, int);
+void	join(char *, int);
+void	part(char *, int);
+void	list(char *, int);
+void	send_msg(int, char *);
+
 
 #endif

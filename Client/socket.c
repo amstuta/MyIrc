@@ -40,6 +40,20 @@ int			create_socket(char *ip, int port)
   return (fd);
 }
 
+void			send_nick(int fd)
+{
+  char			buff[4096];
+  char			buff2[4096];
+  int			rt;
+
+  write(1, "enter your nickname of choice:", 30);
+  if ((rt = read(0, buff, 4095)) <= 0)
+    exit(EXIT_FAILURE);
+  buff[rt] = 0;
+  send_msg(fd, strcat(strcpy(buff2, "NICK "), buff));
+  send_msg(fd, "USER usr 0 *:user user");
+}
+
 int			connect_to_serv(char *cmd)
 {
   int			fd;
@@ -49,7 +63,7 @@ int			connect_to_serv(char *cmd)
 
   strtok(cmd, " ");
   ip = strtok(NULL, ":");
-  if (!(tmp = strtok(NULL, "\n")))
+  if (!(tmp = strtok(NULL, "")))
     return (-1);
   port = atoi(tmp);
   if (!ip || !port)
@@ -59,5 +73,7 @@ int			connect_to_serv(char *cmd)
     }
   if ((fd = create_socket(ip, port)) == -1)
     return (-1);
+  printf("connected: port: %d ip: %s \n", port, ip);
+  send_nick(fd);
   return (fd);
 }
